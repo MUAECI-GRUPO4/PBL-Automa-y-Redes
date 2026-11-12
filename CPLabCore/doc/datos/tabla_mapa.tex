@@ -1,0 +1,31 @@
+\begin{longtable}{>{\raggedleft\arraybackslash}p{0.9cm}p{3.6cm}p{2.0cm}p{2.5cm}p{2.3cm}p{3.5cm}}
+\toprule
+\textbf{Byte} & \textbf{Campo} & \textbf{Estación} & \textbf{Lo escribe} & \textbf{Lo lee} & \textbf{Valores} \\
+\midrule
+\endhead
+\rowcolor{gris!18}0 & Marca de bloque válido & General & 1\textordfeminine{} estación que lo inicializa & Todas & 16\#A5 = bloque inicializado \\
+\rowcolor{gris!18}1 & ID de palet / n\textordmasculine{} de pieza & General & HMI o 1\textordfeminine{} estación & Todas & 1–255 \\
+\rowcolor{gris!18}2 & Receta / tipo de producto & General & HMI o 1\textordfeminine{} estación & Todas & Códigos a definir por el grupo \\
+\rowcolor{gris!18}3 & Estaciones a realizar (máscara) & General & HMI o 1\textordfeminine{} estación & Todas & Ver hoja 'Máscaras' \\
+\rowcolor{gris!18}4 & Estaciones completadas (máscara) & General & Cada estación pone su bit & Todas & Ver hoja 'Máscaras' \\
+\rowcolor{gris!18}5 & Calidad global & General & Cámara & Out & 0 sin evaluar \,\textperiodcentered\, 1 OK \,\textperiodcentered\, 2 NOK \\
+\rowcolor{gris!18}6 & Código de rechazo & General & Estación que rechaza & Out, HMI & Nibble alto = estación (1 Cám, 2 Back, 3 Press, 4 Out) \,\textperiodcentered\, nibble bajo = motivo \\
+\rowcolor{gris!18}7 & Libre del grupo & General & — & — & Libre \\
+\rowcolor{cam!18}8 & JobNumber de la cámara & Cámara & Receta / HMI & Cámara & 1 = 0 fusibles \,\textperiodcentered\, 2 = izq \,\textperiodcentered\, 3 = dcha \,\textperiodcentered\, 4 = 2 fusibles \,\textperiodcentered\, 5 = orientación palet \\
+\rowcolor{cam!18}9 & Resultado de la cámara & Cámara & Cámara & Out & bit0 inspeccionado \,\textperiodcentered\, bit1 OK (RDBU) \,\textperiodcentered\, bit2 orientación OK \\
+\rowcolor{cam!18}10 & ImageID (\%EB1004) & Cámara & Cámara & HMI / trazabilidad & 0–255 \\
+\rowcolor{cam!18}11 & Intentos de inspección & Cámara & Cámara & HMI & 0–n \\
+\rowcolor{back!18}12 & Estado BackCover & BackCover & BackCover & Press & bit0 requerida \,\textperiodcentered\, bit1 colocada \,\textperiodcentered\, bit2 falta stock \\
+\rowcolor{press!18}13 & N\textordmasculine{} de golpes de prensa & Press & Receta / HMI & Press & 1–n \\
+\rowcolor{press!18}14--15 & Tiempo de prensado (ms) & Press & Receta / HMI & Press & p. ej. 2000 \\
+\rowcolor{press!18}16 & Golpes realizados & Press & Press & Out & 0–n \\
+\rowcolor{out!18}17 & Almacén destino & Out & Receta (opcional) & Out & 0 auto por calidad \,\textperiodcentered\, 1 izquierdo \,\textperiodcentered\, 2 derecho \\
+\rowcolor{out!18}18 & Almacén depositado & Out & Out & HMI & 1 izquierdo \,\textperiodcentered\, 2 derecho \\
+\rowcolor{gris!18}19 & Libre del grupo & General & — & — & Libre \\
+\rowcolor{comp!18}20 & RESERVADO – Fusibles colocados (propuesta) & Compartido & RASS (otro grupo) & Cámara & bit0 izquierdo \,\textperiodcentered\, bit1 derecho \\
+\rowcolor{comp!18}21 & RESERVADO – Resultado medición (propuesta) & Compartido & Measurement (otro grupo) & Out & 0 sin medir \,\textperiodcentered\, 1 OK \,\textperiodcentered\, 2 NOK \\
+\rowcolor{comp!18}22 & RESERVADO – N\textordmasculine{} de taladros (propuesta) & Compartido & Drilling (otro grupo) & Out (en CIROS) & 0, 2, 4 \\
+\rowcolor{comp!18}23 & RESERVADO – Tapa frontal colocada (propuesta) & Compartido & FrontCover (otro grupo) & BackCover & 0 no \,\textperiodcentered\, 1 sí \\
+\rowcolor{comp!18}24--27 & RESERVADO – Libre para compartir & Compartido & Por acordar & Por acordar & Libre \\
+\bottomrule
+\end{longtable}

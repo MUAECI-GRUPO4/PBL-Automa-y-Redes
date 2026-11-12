@@ -1,0 +1,89 @@
+\chapter{Cuatro ideas antes de seguir}\label{cap:conceptos}
+
+Para usar la librería hacen falta cuatro ideas. Ninguna es difícil, pero conviene tenerlas claras: casi todos los errores de migración vienen de confundir alguna.
+
+\section{Las entradas y salidas viajan en estructuras}
+En un PLC Siemens, los sensores y actuadores llegan como bits en la \emph{imagen de proceso}: la entrada \cod{\%I1.0} es el primer bit del byte 1. Para no manejar bits sueltos, la librería agrupa los bits de cada módulo en un tipo de datos (UDT) con nombres: por ejemplo \cod{UDT\_Entradas\_Basico} tiene los miembros \cod{Boton\_marcha}, \cod{Boton\_paro}, etc. Después, \emph{una variable PLC} (un \emph{tag}) de ese tipo, situada en la dirección del módulo, hace que cada bit tenga su nombre.
+
+\begin{idea}
+El tag \cod{Entradas\_Basico} de tipo \cod{UDT\_Entradas\_Basico} en la dirección \cod{\%I1.0} \textbf{es} el byte de entradas 1 del PLC, visto con nombres. No hay que copiar nada: el nombre y el bit son la misma cosa.
+\end{idea}
+
+La librería usa cinco de estos tags comunes (los tienes en el apéndice~\ref{ap:direcciones}). Tu aplicación puede tener los suyos (\cod{UDT\_Entradas\_APP} y \cod{UDT\_Salidas\_APP}), que la librería no ve nunca.
+
+\section{El palet lleva una memoria: el tag RFID}
+Cada palet lleva un transpondedor (\emph{tag}) con 108 bytes de memoria. Es lo único que \textbf{viaja con el palet}: lo que una estación escribe en el tag, la siguiente lo lee. Por eso el tag es el idioma común de la línea.
+
+El lector de cada estación (un SIMATIC RF210R conectado por IO-Link) no deja leer byte a byte. Funciona así:
+\begin{itemize}
+\item Se le da una \textbf{dirección de inicio} (un \emph{offset} en bytes dentro del tag) y una orden de leer o de escribir.
+\item Lee o escribe siempre \textbf{un bloque de 28 bytes} a partir de esa dirección.
+\item Termina cuando la señal \emph{proceso listo} baja y vuelve a subir, y la dirección que devuelve coincide con la que se pidió.
+\end{itemize}
+
+\begin{ojo}
+Una escritura \textbf{siempre escribe los 28 bytes}, no solo los que tú quieres cambiar. Si escribes sin haber leído antes, los bytes que no tocas se quedan a cero y \emph{borras} lo que habían escrito las otras estaciones. Esta es la razón de ser de las máscaras (idea 3).
+\end{ojo}
+
+Hay un detalle más: el grupo acordó usar un único bloque de 28 bytes al principio del tag, a partir de la dirección que asigne el profesor (0 si el bloque es el primero). El reparto de esos 28 bytes está en el capítulo~\ref{cap:mapa}.
+
+\section{La imagen del palet y las máscaras}
+Para que tu aplicación no tenga que preocuparse del lector, la librería le entrega los datos del palet en una variable llamada \cod{Imagen\_palet}, un array de 28 bytes. Funciona como una fotocopia del bloque del tag con permisos:
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[hwcaja,minimum width=2.6cm,minimum height=1.5cm,font=\sffamily\small] (tag) at (0,0) {\textbf{Tag}\\[-1pt]\scriptsize 28 bytes del bloque};
+\node[libcaja,minimum width=3.2cm,minimum height=1.5cm,font=\sffamily\small] (rf) at (4.4,0) {\cod{Est\_FB\_RFID}\\[-1pt]\scriptsize lee y escribe\\[-2pt]\scriptsize con las máscaras};
+\node[caja,fill=white,minimum width=2.8cm,minimum height=1.5cm,font=\sffamily\small] (img) at (8.5,0) {\cod{Imagen\_palet}\\[-1pt]\scriptsize 28 bytes};
+\node[appcaja,minimum width=2.6cm,minimum height=1.5cm,font=\sffamily\small] (app) at (12.3,0) {\textbf{Tu aplicación}};
+\draw[flecha,<->] (tag) -- (rf);
+\draw[flecha,<->] (rf) -- (img);
+\draw[flecha,<->] (img) -- (app);
+\node[etiqueta,above=2pt of $(tag.east)!0.5!(rf.west)$] {orden leer / escribir};
+\node[etiqueta,below=14pt of rf,align=center] {\cod{Mascara\_lectura}: qué bytes llegan a la imagen\\\cod{Mascara\_escritura}: qué bytes vuelven al tag};
+\end{tikzpicture}
+\caption{El camino de los datos del palet.}
+\end{figure}
+
+\begin{itemize}
+\item \textbf{Al leer}, a la imagen solo llegan los bytes que marca \cod{Mascara\_lectura}; el resto de la imagen queda a cero. Tu aplicación solo ve lo que necesita.
+\item \textbf{Al escribir}, al tag solo van los bytes de la imagen que marca \cod{Mascara\_escritura}; los demás se devuelven al tag \emph{tal como se leyeron}. Tu aplicación no puede estropear los bytes de otras estaciones.
+\end{itemize}
+
+Cada máscara es un número de 32 bits en el que el bit $n$ corresponde al byte $n$ del bloque. En el capítulo~\ref{cap:mapa} se aprende a calcularlas.
+
+\section{Tipos de la librería y copias maestras}\label{sec:tipos-copias}
+Una librería global de TIA Portal guarda dos clases de cosas, que se usan de manera distinta:
+
+\begin{description}[style=nextline,leftmargin=1.2cm]
+\item[Tipos (\emph{Types}).] Tienen \textbf{versión}. Al arrastrarlos a tu proyecto quedan \emph{ligados} a la librería: no se editan en tu proyecto, y si sale una versión nueva se actualizan con un par de clics. Son las piezas que no debes tocar: los cuatro FB y los UDT comunes.
+\item[Copias maestras (\emph{Master copies}).] Son copias normales, sin versión ni vínculo. Se arrastran a tu proyecto y son \textbf{tuyas}: las cambias como quieras. Son los puntos de partida: la plantilla de aplicación, el \cod{Main} de ejemplo, el bloque de datos y la tabla de variables.
+\end{description}
+
+\begin{idea}
+Los tipos son \textbf{para usarlos}; las copias maestras son \textbf{para modificarlas}. Si algo tuyo tiene que cambiar, está en las copias maestras. Si algo de la librería tiene que cambiar, se pide un cambio en el tipo para todos.
+\end{idea}
+
+\section{Glosario}
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.4cm}X}
+\toprule
+Palabra & Qué significa aquí \\
+\midrule
+Palet & La plataforma que lleva la pieza por la línea. Lleva un tag RFID. \\
+Tag RFID & El transpondedor del palet; 108 bytes de memoria. La librería usa un bloque de 28. \\
+Bloque & Los 28 bytes del tag que acordó el grupo (capítulo~\ref{cap:mapa}). \\
+Imagen del palet & La copia en el PLC del bloque, con permisos (\cod{Imagen\_palet}). \\
+Máscara & Número de 32 bits que dice qué bytes se leen o se escriben. \\
+Contrato & Las ocho señales y la imagen que cumple tu aplicación para trabajar con la librería. \\
+Aplicación & El bloque de función que es propio de cada estación. \\
+FB / OB / DB & Bloque de función / bloque de organización (\cod{Main}) / bloque de datos. \\
+UDT & Tipo de datos definido por el usuario (una estructura con nombres). \\
+Tag (PLC) & Una variable del PLC con nombre y dirección. No confundir con el tag RFID. \\
+Instancia & Cada llamada a un FB tiene su propia memoria, su bloque de datos de instancia. \\
+Librería global & Archivo de TIA con tipos y copias maestras que se comparte entre proyectos. \\
+\bottomrule
+\end{tabularx}
+\end{center}

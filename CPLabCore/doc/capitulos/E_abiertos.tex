@@ -1,0 +1,37 @@
+\chapter{Puntos abiertos y mejoras}\label{ap:abiertos}
+
+Lo que no está cerrado, dicho con claridad. Ninguno impide usar la librería, pero conviene saberlo.
+
+\section{Por comprobar en la maqueta real}
+\begin{enumerate}
+\item \textbf{Polaridad de \cod{Sensor\_stopper\_abajo}.} La etapa 4 de la cinta avanza cuando este sensor \emph{deja} de estar activo, y el simulador cumple esa condición al instante. El manual lo define como «stopper abajo». Hay que ver con la maqueta, con el stopper subido y bajado, qué valor da el sensor, y si la condición debe ser la contraria.
+\item \textbf{Tamaño del bloque, 24 o 28 bytes.} El manual menciona «bloques de 24 bytes» en un apartado y 28 en el resto. La librería usa 28, como el UDT del lector y el Excel.
+\item \textbf{Comportamiento del lector real} con tiempos reales (el simulador lo imita con 0,12\,s de proceso).
+\item \textbf{Varios palets pegados.} Se comprobó con la estación Out en el simulador antiguo, no en el de la librería.
+\end{enumerate}
+
+\section{Por decidir en el grupo}
+\begin{enumerate}
+\item \textbf{Qué escribe Out exactamente.} El Excel dice que Out escribe el byte 4 (bit 3) y el 18, \emph{y además} pone todo el bloque a cero. Como el cero lo pisa todo, la librería está probada con la escritura completa a cero. Si se prefiere conservar los bytes 4 y 18, la máscara de Out sería \cod{16\#00040010} y no se borraría.
+\item \textbf{Calidad «sin evaluar» (byte 5 igual a 0).} Out lo trata como NOK. El mapa no dice nada.
+\item \textbf{Qué almacén recibe qué.} En el simulador antiguo la tapa buena iba al almacén derecho; el Excel dice «OK izquierdo, NOK derecho». La aplicación de Out del proyecto actual manda OK a la derecha. Hay que dejarlo escrito en el Excel.
+\item \textbf{Job por defecto de la cámara} (en el ejemplo, el 4).
+\item \textbf{Bytes 20 a 23}: propuesta de datos de otros grupos, aún sin acordar.
+\end{enumerate}
+
+\section{Mejoras para una versión futura}
+\begin{enumerate}
+\item Leer siempre la unión de la máscara de lectura y la de escritura, para que la regla O1 deje de existir.
+\item Un temporizador máximo para la aplicación, con aviso.
+\item Quitar la etapa 2 de la cinta, que no se alcanza.
+\item Resolver los dos avisos de conversión de enteros de \cod{Est\_FB\_RFID}.
+\item Añadir el prefijo \cod{Est\_} a los UDT, para que no choquen con tipos con el mismo nombre en el proyecto de cada uno.
+\item Incluir el simulador de pruebas en la distribución de la librería.
+\end{enumerate}
+
+\section{Limitaciones de las comprobaciones}
+\begin{itemize}
+\item La copia de la \emph{tabla de variables} de la plantilla no se ha podido comprobar de manera automática, solo a mano en TIA.
+\item Los ejemplos de aplicación compilan y se han probado con modelos físicos muy sencillos; los nombres de sus sensores y actuadores son de ejemplo.
+\item El archivo \texttt{.zal20} de la versión 1.0.0 contiene el error de la cinta y no debe usarse.
+\end{itemize}

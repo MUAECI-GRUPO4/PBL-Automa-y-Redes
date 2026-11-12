@@ -1,0 +1,20 @@
+\begin{tabular}{r l r r r r r}
+\toprule
+Byte & Campo & \textbf{Inicio} & \textbf{Cámara} & \textbf{BackCover} & \textbf{Press} & \textbf{Out} \\
+\midrule
+0 & Marca de bloque válido & \texttt{A5} & \texttt{A5} & \texttt{A5} & \texttt{A5} & \cellcolor{naranja!25}\texttt{00} \\
+1 & ID de palet & \texttt{07} & \texttt{07} & \texttt{07} & \texttt{07} & \cellcolor{naranja!25}\texttt{00} \\
+2 & Receta & \texttt{01} & \texttt{01} & \texttt{01} & \texttt{01} & \cellcolor{naranja!25}\texttt{00} \\
+3 & Estaciones a realizar & \texttt{0F} & \texttt{0F} & \texttt{0F} & \texttt{0F} & \cellcolor{naranja!25}\texttt{00} \\
+4 & Estaciones completadas & \texttt{00} & \cellcolor{naranja!25}\texttt{01} & \cellcolor{naranja!25}\texttt{03} & \cellcolor{naranja!25}\texttt{07} & \cellcolor{naranja!25}\texttt{00} \\
+5 & Calidad global & \texttt{00} & \cellcolor{naranja!25}\texttt{01} & \texttt{01} & \texttt{01} & \cellcolor{naranja!25}\texttt{00} \\
+9 & Resultado de la cámara & \texttt{00} & \cellcolor{naranja!25}\texttt{07} & \texttt{07} & \texttt{07} & \cellcolor{naranja!25}\texttt{00} \\
+10 & ImageID & \texttt{00} & \cellcolor{naranja!25}\texttt{2A} & \texttt{2A} & \texttt{2A} & \cellcolor{naranja!25}\texttt{00} \\
+11 & Intentos de inspección & \texttt{00} & \cellcolor{naranja!25}\texttt{01} & \texttt{01} & \texttt{01} & \cellcolor{naranja!25}\texttt{00} \\
+12 & Estado BackCover & \texttt{00} & \texttt{00} & \cellcolor{naranja!25}\texttt{03} & \texttt{03} & \cellcolor{naranja!25}\texttt{00} \\
+13 & Nº de golpes & \texttt{02} & \texttt{02} & \texttt{02} & \texttt{02} & \cellcolor{naranja!25}\texttt{00} \\
+14 & Tiempo de prensado (alto) & \texttt{07} & \texttt{07} & \texttt{07} & \texttt{07} & \cellcolor{naranja!25}\texttt{00} \\
+15 & Tiempo de prensado (bajo) & \texttt{D0} & \texttt{D0} & \texttt{D0} & \texttt{D0} & \cellcolor{naranja!25}\texttt{00} \\
+16 & Golpes realizados & \texttt{00} & \texttt{00} & \texttt{00} & \cellcolor{naranja!25}\texttt{02} & \cellcolor{naranja!25}\texttt{00} \\
+\bottomrule
+\end{tabular}

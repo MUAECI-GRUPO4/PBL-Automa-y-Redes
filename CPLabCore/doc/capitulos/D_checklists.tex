@@ -1,0 +1,63 @@
+\chapter{Hojas para imprimir}\label{ap:checklists}
+
+\section{Inventario de tu estación}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabularx}{\textwidth}{|>{\bfseries}p{3.6cm}|X|}
+\hline
+Estación & \\ \hline
+Quién migra & \\ \hline
+Fecha & \\ \hline
+\multicolumn{2}{|l|}{\textbf{1. Mis señales físicas} (sensores y actuadores de la aplicación; nombre y dirección)} \\ \hline
+\multicolumn{2}{|p{15cm}|}{\vspace{2.6cm}} \\ \hline
+\multicolumn{2}{|l|}{\textbf{2. Mis datos del palet} (byte del bloque, qué es, si lo leo, si lo escribo)} \\ \hline
+\multicolumn{2}{|p{15cm}|}{\vspace{3.2cm}} \\ \hline
+\multicolumn{2}{|l|}{\textbf{3. Cuándo puedo empezar} (condición de reposo)} \\ \hline
+\multicolumn{2}{|p{15cm}|}{\vspace{1.6cm}} \\ \hline
+\multicolumn{2}{|l|}{\textbf{4. Cuándo he terminado}} \\ \hline
+\multicolumn{2}{|p{15cm}|}{\vspace{1.6cm}} \\ \hline
+\multicolumn{2}{|l|}{\textbf{Mis máscaras}} \\ \hline
+\cod{Mascara\_lectura} & 16\# \\ \hline
+\cod{Mascara\_escritura} & 16\# \\ \hline
+\end{tabularx}
+\end{center}
+
+\section{Lista de la migración}
+\begin{itemize}[label=$\square$,itemsep=4pt]
+\item Copia de seguridad hecha (nombre: \dotfill).
+\item Inventario relleno.
+\item Direcciones de hardware comprobadas.
+\item Librería \vlib\ desarchivada.
+\item \cod{Est\_FB\_Estacion} arrastrada (con sus tres FB y seis UDT).
+\item Tabla de variables copiada o siete tags creados.
+\item Código antiguo apartado en la carpeta \menu{Antiguo}.
+\item Aplicación creada a partir de la plantilla.
+\item Constantes \cod{IDX\_*} y máscaras calculadas.
+\item \cod{Main}: red 1 (\cod{Est\_FB\_Estacion}) y red 2 (aplicación).
+\item Compila con 0 errores.
+\item Contrato comprobado (cinco comprobaciones del capítulo~\ref{cap:contrato}).
+\item Pruebas de aceptación 1 a 12 hechas.
+\item Primera vez en la maqueta con la escritura desactivada.
+\item Escritura activada y bytes comprobados.
+\end{itemize}
+
+\section{Pruebas de aceptación}
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|r|p{6.2cm}|c|p{4.8cm}|}
+\hline
+N.º & Prueba & OK & Observaciones \\ \hline
+1 & Arranque sin palet & & \\ \hline
+2 & Marcha y paro & & \\ \hline
+3 & Entra un palet & & \\ \hline
+4 & Lectura del tag & & \\ \hline
+5 & Tu aplicación & & \\ \hline
+6 & Escritura del tag & & \\ \hline
+7 & Evacuación & & \\ \hline
+8 & Dos palets seguidos & & \\ \hline
+9 & Emergencia en reposo & & \\ \hline
+10 & Emergencia con la aplicación trabajando & & \\ \hline
+11 & Fallo del lector & & \\ \hline
+12 & Palet sin datos & & \\ \hline
+\end{tabular}
+\end{center}

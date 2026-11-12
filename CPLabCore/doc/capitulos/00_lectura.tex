@@ -1,0 +1,53 @@
+\chapter*{Cómo leer este documento}
+\addcontentsline{toc}{chapter}{Cómo leer este documento}
+\markboth{Cómo leer este documento}{Cómo leer este documento}
+
+Este documento explica una librería de TIA Portal, \lib, que contiene todo lo que las estaciones de la CP-Lab tienen en común, de modo que cada uno de nosotros solo programe lo que es propio de su estación. Está escrito para que lo pueda usar cualquiera del grupo, aunque no haya visto nunca el código de la estación Out, donde nació la librería.
+
+No hace falta leerlo entero. Elige tu ruta:
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries}p{4.3cm}X>{\raggedleft\arraybackslash}p{2.6cm}}
+\toprule
+Si… & Lee… & Páginas \\
+\midrule
+Quiero saber de qué va esto, en cinco minutos & Capítulos~\ref{cap:porque} y~\ref{cap:vision} & \pageref{cap:porque}--\pageref{cap:conceptos} \\
+Tengo que \textbf{migrar mi estación} a la librería & Capítulo~\ref{cap:instalacion} y, sobre todo, el capítulo~\ref{cap:migracion} & \pageref{cap:instalacion}--\pageref{cap:pruebas} \\
+Ya tengo la librería y quiero entender \textbf{qué hace cada bloque} & Capítulo~\ref{cap:componentes} & \pageref{cap:componentes} \\
+No sé cómo enchufar mi aplicación a la librería & Capítulos~\ref{cap:contrato} y~\ref{cap:mapa} & \pageref{cap:contrato}--\pageref{cap:instalacion} \\
+Algo \textbf{no compila} o no se comporta & Capítulo~\ref{cap:problemas} & \pageref{cap:problemas} \\
+Quiero \textbf{cambiar} la librería & Capítulo~\ref{cap:mantenimiento} & \pageref{cap:mantenimiento} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section*{Las cajas de colores}
+A lo largo del texto aparecen estas cajas. Merece la pena fijarse en ellas:
+
+\begin{idea}
+Una idea que sostiene todo lo demás. Si solo recuerdas lo de estas cajas, ya has entendido lo importante.
+\end{idea}
+\begin{consejo}
+Un atajo o una buena práctica que te ahorra tiempo.
+\end{consejo}
+\begin{ojo}
+Algo en lo que es fácil equivocarse. Léelo antes de seguir.
+\end{ojo}
+\begin{peligro}
+Algo que, si se hace mal, deja la estación sin funcionar o puede dañar la maqueta.
+\end{peligro}
+\begin{ejemplo}
+Un caso concreto, con números, para ver la idea funcionando.
+\end{ejemplo}
+
+\section*{Qué se supone que sabes}
+Sabes abrir un proyecto en TIA Portal, escribir un bloque de función en SCL y definir un tipo de datos (UDT). No necesitas saber programación avanzada: todo lo que aparece en este documento se explica cuando aparece. Los nombres de los menús de TIA se dan en inglés (como están en la VM del grupo) y entre paréntesis en español cuando es útil.
+
+\section*{Cómo se ha comprobado lo que cuenta este documento}
+Por honestidad, desde el principio:
+\begin{itemize}
+\item La librería se ha \textbf{compilado en TIA Portal V20} y se ha comprobado que se instala en un proyecto vacío sin errores.
+\item Se ha probado su lógica con un \textbf{simulador} hecho para el grupo: 48 comprobaciones (estaciones Cámara, BackCover, Press y Out, emergencia, fallo del RFID y los tres ejemplos de aplicación). Todas pasan con la versión \vlib.
+\item \textbf{No se ha probado en la maqueta real.} El comportamiento del lector RFID y del stopper reales puede tener matices que el simulador no recoge. La sección~\ref{sec:primera-vez} explica cómo hacer la primera prueba en la maqueta con seguridad.
+\end{itemize}

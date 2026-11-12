@@ -1,0 +1,25 @@
+\chapter{Direcciones y UDT}\label{ap:direcciones}
+
+\section{Los módulos de la estación}
+Según el manual de la CP-Lab (apartado 11.2.1) y la configuración de la estación Out, estas direcciones son iguales en todas las estaciones:
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries}p{4.3cm}p{2.7cm}X}
+\toprule
+Parte de la máquina & Entradas / Salidas & Contenido \\
+\midrule
+Aplicación (1 byte) & \cod{\%E0} / \cod{\%A0} & Señales propias de cada estación (cambia de una a otra). \\
+Módulo básico & \cod{\%E1} / \cod{\%A1} & Botonera, selector, seta, sensores de cinta; luces, cinta, stopper. \\
+Lector RFID (IO-Link) & \cod{\%E10} / \cod{\%A10} & Estado, error, dirección y 28 bytes de datos. \\
+Módulo del stopper (IO-Link) & \cod{\%E42} & Sensores inductivos, encoder, «stopper abajo». \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Los UDT bit a bit}
+\input{datos/tabla_udt.tex}
+
+\begin{ojo}
+Estos UDT tienen que estar \textbf{bit a bit} como se muestran. Un miembro movido de sitio cambia el sensor al que se refiere. Por eso los tipos de la librería no se editan en los proyectos.
+\end{ojo}

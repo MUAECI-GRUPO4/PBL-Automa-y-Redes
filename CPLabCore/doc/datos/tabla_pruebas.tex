@@ -1,0 +1,57 @@
+\begin{longtable}{r p{12.2cm} c}
+\toprule
+\textbf{N.º} & \textbf{Comprobación} & \textbf{Resultado} \\
+\midrule
+\endhead
+\multicolumn{3}{l}{\sffamily\bfseries\color{azul} Librería}\\
+1 & Camara: el palet completa el ciclo y sale & \textcolor{verde}{\ding{51}} \\
+2 & Camara: la app solo ve los bytes de Mascara\_lectura & \textcolor{verde}{\ding{51}} \\
+3 & Camara: el tag queda como esperado & \textcolor{verde}{\ding{51}} \\
+4 & Camara: los bytes ajenos (fuera de Mascara\_escritura) no cambian & \textcolor{verde}{\ding{51}} \\
+5 & Camara: una sola escritura al tag por palet & \textcolor{verde}{\ding{51}} \\
+6 & BackCover: el palet completa el ciclo y sale & \textcolor{verde}{\ding{51}} \\
+7 & BackCover: la app solo ve los bytes de Mascara\_lectura & \textcolor{verde}{\ding{51}} \\
+8 & BackCover: el tag queda como esperado & \textcolor{verde}{\ding{51}} \\
+9 & BackCover: los bytes ajenos (fuera de Mascara\_escritura) no cambian & \textcolor{verde}{\ding{51}} \\
+10 & BackCover: una sola escritura al tag por palet & \textcolor{verde}{\ding{51}} \\
+11 & Press: el palet completa el ciclo y sale & \textcolor{verde}{\ding{51}} \\
+12 & Press: la app solo ve los bytes de Mascara\_lectura & \textcolor{verde}{\ding{51}} \\
+13 & Press: el tag queda como esperado & \textcolor{verde}{\ding{51}} \\
+14 & Press: los bytes ajenos (fuera de Mascara\_escritura) no cambian & \textcolor{verde}{\ding{51}} \\
+15 & Press: una sola escritura al tag por palet & \textcolor{verde}{\ding{51}} \\
+16 & Out: el palet completa el ciclo y sale & \textcolor{verde}{\ding{51}} \\
+17 & Out: la app solo ve los bytes de Mascara\_lectura & \textcolor{verde}{\ding{51}} \\
+18 & Out: el tag queda como esperado & \textcolor{verde}{\ding{51}} \\
+19 & Out: los bytes ajenos (fuera de Mascara\_escritura) no cambian & \textcolor{verde}{\ding{51}} \\
+20 & Out: una sola escritura al tag por palet & \textcolor{verde}{\ding{51}} \\
+21 & plantilla: el palet entra, se procesa y sale con la plantilla tal cual & \textcolor{verde}{\ding{51}} \\
+22 & error RFID: la gestion pasa a "fallo RFID" (etapa 6) & \textcolor{verde}{\ding{51}} \\
+23 & error RFID: la app no llega a arrancar & \textcolor{verde}{\ding{51}} \\
+24 & error RFID: tras rearmar el palet se evacua & \textcolor{verde}{\ding{51}} \\
+25 & error RFID: no se escribe nada en el tag & \textcolor{verde}{\ding{51}} \\
+26 & emergencia: la app esta trabajando & \textcolor{verde}{\ding{51}} \\
+27 & emergencia: Emergencia activa y la gestion vuelve a 0 & \textcolor{verde}{\ding{51}} \\
+28 & emergencia: la cinta y el stopper se paran & \textcolor{verde}{\ding{51}} \\
+29 & emergencia: no se escribe nada en el tag & \textcolor{verde}{\ding{51}} \\
+30 & emergencia: tras soltar la seta y rearmar, Emergencia vuelve a 0 & \textcolor{verde}{\ding{51}} \\
+\multicolumn{3}{l}{\sffamily\bfseries\color{azul} Ejemplos de aplicación}\\
+31 & Press: completa el ciclo & \textcolor{verde}{\ding{51}} \\
+32 & Press: golpes realizados = 2 (byte 16) & \textcolor{verde}{\ding{51}} \\
+33 & Press: bit 2 de "completadas" puesto (byte 4 = 7) & \textcolor{verde}{\ding{51}} \\
+34 & Press: el resto del bloque intacto & \textcolor{verde}{\ding{51}} \\
+35 & Press: sin tapa trasera en el tag no prensa ni marca completada & \textcolor{verde}{\ding{51}} \\
+36 & Press: si no esta en "estaciones a realizar", el palet pasa sin cambios & \textcolor{verde}{\ding{51}} \\
+37 & BackCover: completa el ciclo & \textcolor{verde}{\ding{51}} \\
+38 & BackCover: estado = requerida + colocada (byte 12 = 3) & \textcolor{verde}{\ding{51}} \\
+39 & BackCover: bit 1 de "completadas" (byte 4 = 3) & \textcolor{verde}{\ding{51}} \\
+40 & BackCover: el resto del bloque intacto & \textcolor{verde}{\ding{51}} \\
+41 & BackCover: sin stock -> byte 12 = requerida + falta stock (5) y sin bit de completada & \textcolor{verde}{\ding{51}} \\
+42 & Camara: completa el ciclo con el tag vacio & \textcolor{verde}{\ding{51}} \\
+43 & Camara: inicializa el bloque (byte 0 = A5) & \textcolor{verde}{\ding{51}} \\
+44 & Camara: usa el job por defecto (4) sin datos & \textcolor{verde}{\ding{51}} \\
+45 & Camara: calidad OK (5=1), resultado (9=7), ImageID (10=42), intentos (11=1), completada (4=1) & \textcolor{verde}{\ding{51}} \\
+46 & Camara: job deducido de los fusibles (byte 20 = 2 -> job 3) & \textcolor{verde}{\ding{51}} \\
+47 & Camara: NOK -> calidad 2 y rechazo 16\#11 & \textcolor{verde}{\ding{51}} \\
+48 & Camara: los bytes que no escribe (8, 20) no cambian & \textcolor{verde}{\ding{51}} \\
+\bottomrule
+\end{longtable}

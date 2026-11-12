@@ -1,0 +1,96 @@
+\chapter{Probar tu estación}\label{cap:pruebas}
+
+Este capítulo tiene dos mitades: lo que ya se ha probado de la librería (y qué no), y cómo probar tú tu estación, incluida la primera vez en la maqueta real.
+
+\section{Qué se ha probado ya}
+\subsection{El simulador del grupo}
+Para no depender de la maqueta, se ha construido un simulador que ejecuta \textbf{el código SCL de la librería tal cual sale de TIA Portal} y lo conecta a un modelo de la estación: una cinta con un palet, el stopper, y un lector RFID \emph{con el comportamiento del lector real} (sin eco de la orden, dato válido solo cuando «listo» baja y vuelve a subir, bloque de 28 bytes). La aplicación de cada estación se modela con el contrato de la librería.
+
+Con él se hicieron \textbf{48 comprobaciones}, todas correctas con la versión \vlib. La lista completa está al final del capítulo; en resumen:
+\begin{itemize}
+\item Las cuatro estaciones (Cámara, BackCover, Press y Out), con sus máscaras: el palet completa el ciclo, la aplicación solo ve los bytes de su máscara de lectura, el tag queda como se espera y los bytes ajenos no cambian.
+\item La plantilla de aplicación, sin tocar, completa un ciclo con la librería.
+\item Un fallo del RFID lleva a la etapa 6, no arranca la aplicación, no escribe nada, y tras el rearme el palet sale.
+\item Una emergencia durante la aplicación detiene la cinta y el stopper, no escribe nada en el tag, y tras soltar la seta y rearmar se vuelve a la normalidad.
+\item Los tres ejemplos de aplicación (Press, BackCover y Cámara), con modelos sencillos de su hardware.
+\end{itemize}
+
+\subsection{Lo que encontraron las pruebas}
+Las pruebas sirvieron: \textbf{encontraron un error en la versión 1.0.0 de la librería}. En \cod{Est\_FB\_Estacion}, la condición que apaga la cinta estaba escrita al revés (\cod{IF NOT Inhibir\_cinta THEN Cinta\_dch := FALSE}), de modo que la cinta se apagaba siempre que la aplicación \emph{no} la inhibía, es decir, siempre. Con esa versión, 17 de las 30 comprobaciones de la librería fallaban: la cinta nunca arrancaba. Está corregido en la versión \vlib\ (\cod{IF Inhibir\_cinta THEN}). Si tu archivo es el \texttt{v1.0.0}, pide el \texttt{v\vlib}.
+
+\begin{peligro}
+Usa siempre la versión \vlib\ o posterior. La 1.0.0 no mueve la cinta.
+\end{peligro}
+
+\subsection{Cómo se ve un ciclo}
+Las dos figuras siguientes son del simulador. En la primera, un palet por la estación Cámara (la figura~\ref{fig:crono} del capítulo~\ref{cap:vision}); en la segunda, por la estación Out, que al final escribe el bloque a cero. Las etapas (arriba) cambian siempre en el mismo orden.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{figuras/crono_ciclo_out.png}
+\caption{Un palet en la estación Out (simulación).}
+\end{figure}
+
+\subsection{Qué \emph{no} cubre el simulador}
+\begin{itemize}
+\item \textbf{El hardware real}: tiempos de IO-Link, ruido, polaridad de cada sensor, señales que no están conectadas.
+\item \textbf{El PROFINET}, la HMI y las comunicaciones con otros PLC (cámara, Festo).
+\item \textbf{Varios palets pegados} en la cinta (en la estación Out se probó con el simulador de CIROS, no con este).
+\item \textbf{Tu aplicación real.} Los ejemplos prueban el patrón, no tu mecanismo.
+\end{itemize}
+
+\section{Pruebas de aceptación en tu estación}
+Después de migrar, haz estas pruebas en este orden. Cada una tiene una forma de hacerla y un resultado esperado. Usa una tabla de observación (\menu{Watch table}) con \cod{DB\_Estacion} y las etapas de \cod{Est\_DB\_Estacion} (\cod{Etapa\_gestion}, y las de las instancias de cinta y RFID).
+
+\begin{center}
+\small
+\begin{longtable}{>{\bfseries}p{0.7cm}p{3.6cm}p{5.0cm}p{5.1cm}}
+\toprule
+N.º & Prueba & Cómo & Resultado esperado \\
+\midrule\endhead
+1 & Arranque sin palet & Alimenta, sin palets en la cinta. Observa \cod{App\_en\_reposo}. & \cod{App\_en\_reposo} verdadera; la luz de marcha se enciende (en automático). \\
+2 & Marcha y paro & Pulsa marcha, luego paro. & Se enciende la luz de ciclo auto; el paro lo detiene. \\
+3 & Entra un palet & Pon un palet en el extremo izquierdo de la cinta. & La cinta lo trae, se para en el tope; \cod{Palet\_en\_posicion}. \\
+4 & Lectura del tag & Observa \cod{Imagen\_palet} cuando el palet esté parado. & Tus bytes aparecen con los valores del tag. Los demás, a cero. \\
+5 & Tu aplicación & Observa \cod{App\_inicio}, \cod{App\_en\_reposo}, \cod{App\_terminada}. & \cod{App\_inicio} sube; tu mecanismo trabaja; al acabar sube \cod{App\_terminada} y se mantiene. \\
+6 & Escritura del tag & Pasa el palet por una estación siguiente, o vuelve a leerlo. & Tus bytes han cambiado como esperabas; los demás, no. \\
+7 & Evacuación & Observa la cinta. & El palet sale, el stopper vuelve a subir, la estación espera otro. \\
+8 & Dos palets seguidos & Mete otro palet detrás. & El segundo se detiene y se procesa tras el primero. \\
+9 & Emergencia en reposo & Pulsa la seta con la estación parada. & Luz de emergencia; la cinta no se mueve. \\
+10 & Emergencia con tu aplicación trabajando & Pulsa la seta a mitad de tu secuencia. & Tus actuadores se paran; no se escribe el tag. Suelta la seta y pulsa rearme: se normaliza. \\
+11 & Fallo del lector & Retira el tag o tapa la antena justo al llegar un palet. & A los 5\,s, etapa 6 (fallo RFID); luz de rearme. Con rearme, el palet sale sin procesar. \\
+12 & Palet sin datos & Usa un palet con el tag a cero. & Tu estación se comporta según el valor «si vale 0» del mapa. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\section{La primera vez en la maqueta real}\label{sec:primera-vez}
+Es la primera vez que la librería habla con un lector y un stopper reales. Para hacerlo sin riesgo para el tag de los demás ni para la maqueta:
+
+\reiniciapaso
+\paso{Empieza con la escritura desactivada}
+Pon \cod{Mascara\_escritura} a \cod{16\#00000000} en \cod{Main}. Con eso, la estación lee el tag pero escribe de vuelta \emph{exactamente lo que leyó}: no cambia nada. Es la prueba más segura.
+
+\paso{Usa un palet de pruebas}
+No uses un palet con datos de otro grupo. Si hace falta, escribe antes en su tag unos datos de ejemplo (por ejemplo los de la columna «Ejemplo» del Excel).
+
+\paso{Prueba sin actuadores peligrosos}
+Con tu mecanismo despejado, y la mano cerca de la seta. Observa las etapas en la tabla de observación en vez de ir a ciegas.
+
+\paso{Comprueba la polaridad de los sensores}
+En la tabla de observación de \cod{Entradas\_Basico} y \cod{Entradas\_Stopper}, con la maqueta parada: \cod{Boton\_paro} y \cod{Seta\_emergencia} deben estar a verdadero (son de contacto cerrado); \cod{Sensor\_stopper\_abajo} debe estar a falso con el stopper arriba. Si algo está al revés, no sigas: puede ser un cableado distinto del de la documentación.
+
+\paso{Pasa un palet}
+Pulsa marcha y mete un palet. Mira el recorrido de las etapas con la figura~\ref{fig:crono} al lado.
+
+\paso{Activa la escritura}
+Cuando la lectura y tu aplicación funcionen, pon tu \cod{Mascara\_escritura} real y repite con un palet de pruebas. Comprueba en el tag, con otra lectura, que cambiaron \textbf{solo tus bytes}.
+
+\begin{ojo}
+Si alguna vez ves que la estación se queda en la etapa 4 de la cinta (liberar) o que el palet no sale, revisa la polaridad del sensor \cod{Sensor\_stopper\_abajo} (apéndice~\ref{ap:abiertos}). Es la parte de la librería que más depende del cableado real.
+\end{ojo}
+
+\section{Lista completa de comprobaciones del simulador}
+\small
+\input{datos/tabla_pruebas.tex}
+\normalsize

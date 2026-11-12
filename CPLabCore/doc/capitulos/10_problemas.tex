@@ -1,0 +1,54 @@
+\chapter{Problemas frecuentes}\label{cap:problemas}
+
+Una tabla de síntomas, causas probables y soluciones. Los mensajes de compilación son los que TIA muestra de verdad (en inglés, como en la VM del grupo); varios se han visto durante la preparación de la librería.
+
+\section{Al compilar}
+\begin{center}
+\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{4.7cm}>{\raggedright\arraybackslash}p{5.2cm}}
+\toprule
+\textbf{Mensaje} & \textbf{Causa} & \textbf{Solución} \\
+\midrule\endhead
+\cod{Tag "Entradas\_Basico" not defined} (y los otros seis) & No has copiado la tabla de variables de la librería. & Copia \menu{Tabla de variables estándar} de la plantilla, o crea los siete tags (sección~\ref{sec:tags}). \\
+\cod{Type conflict for "Entradas\_APP"}, \cod{Block call was invalid because interface was changed in the meantime} & Una llamada en \cod{Main} se hizo con una versión anterior de un bloque y su interfaz ha cambiado. & Borra la caja del bloque en la red y arrástralo otra vez desde el árbol. Cablea los pines de nuevo. \\
+\cod{The operand required at the input or output is missing or has an incorrect data type} & Un pin obligatorio sin cablear (los \texttt{in/out}: \cod{OutBasico}, \cod{OutRFID}, \cod{Imagen\_palet}) o con un tipo equivocado. & Haz doble clic en el mensaje: TIA te lleva a la red y marca el pin en rojo. \\
+\cod{Inputs or outputs are used that do not exist in the configured hardware} (aviso) & Algún tag apunta a una dirección que no tiene módulo en tu configuración. & Es normal al principio. Ajusta la dirección del tag o la configuración de dispositivos. \\
+\cod{The sign or the accuracy of the value may be lost} (aviso, en \cod{Est\_FB\_RFID}) & Conversión implícita entre tipos de entero (no afecta al funcionamiento). & Inofensivo. No lo toques. \\
+No me deja editar un bloque de la librería & Es lo normal: está ligado a la librería. & Si necesitas un cambio, ve al capítulo~\ref{cap:mantenimiento}. \\
+Errores en tu código antiguo (nombres que no existen) & Usa variables o bloques que la librería sustituye. & Muévelo a la carpeta \menu{Antiguo} (fase 3). \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\section{Al ejecutar}
+\begin{center}
+\small
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.2cm}>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{5.1cm}}
+\toprule
+\textbf{Síntoma} & \textbf{Causa probable} & \textbf{Qué mirar o hacer} \\
+\midrule\endhead
+La estación no arranca (la luz de marcha no se enciende) & No se cumplen las condiciones iniciales. & Mira \cod{Estacion\_cond\_iniciales} en la instancia: \cod{App\_en\_reposo} falso, stopper bajado, error de RFID pendiente, o emergencia. \\
+La cinta no se mueve & \cod{Inhibir\_cinta} verdadera; el ciclo no está activo; o estás con la versión 1.0.0. & Mira \cod{Inhibir\_cinta} y \cod{Cinta\_habilitada}. Comprueba la versión de la librería (debe ser $\geq$ \vlib). \\
+El palet no se detiene en el tope & \cod{Sensor\_ind\_bien\_pos} no llega o con polaridad invertida. & Observa \cod{Entradas\_Basico.Sensor\_ind\_bien\_pos} con el palet en el tope. \\
+Se queda en la etapa 1 de la secuencia (leer) y salta a fallo & Lector sin tag detectado, antena apagada, o el módulo IO-Link no está en modo «Scan user data». & Mira \cod{Tag\_detectado}, \cod{Tag\_antena\_apagada}, \cod{Tag\_error}. Comprueba la configuración del lector. A los 5\,s la etapa 6 es lo previsto. \\
+La lectura funciona pero \cod{Imagen\_palet} está a cero & Tu \cod{Mascara\_lectura} no incluye esos bytes (o es 0). & Revisa las máscaras (sección~\ref{sec:calculo-mascara}). \\
+Tus bytes del tag han cambiado, pero uno aparece a cero & Escribes un byte que no está en tu lectura (regla O1). & Añade ese byte a \cod{Mascara\_lectura}. \\
+No cambia nada en el tag & \cod{Mascara\_escritura} a cero (es el valor por defecto) o sin los bits de tus bytes. & Pon tu máscara de escritura. \\
+Los bytes de otras estaciones se estropean & Escribes bytes que no son tuyos, o las direcciones de lectura y escritura son distintas. & Reglas O2 y O5 (sección~\ref{sec:reglas-oro}). \\
+El palet se procesa dos veces & Tu aplicación vuelve a reposo mientras \cod{App\_inicio} sigue activa (regla R3), o las llamadas en \cod{Main} están en otro orden. & Mira el estado de fin de la plantilla y el orden de las dos redes de \cod{Main}. \\
+La estación se queda esperando en la etapa 2 & Tu aplicación no sube \cod{App\_terminada}. & Observa los estados de tu aplicación; añade un temporizador de seguridad y \cod{App\_alarma}. \\
+Tras la emergencia, el rearme no la quita & La seta sigue pulsada. & Se necesita soltar la seta \emph{y} un flanco de rearme. \\
+La luz de rearme está encendida y no sé por qué & Tres causas posibles: emergencia, fallo del RFID (etapa 6), o tu \cod{App\_rearme\_requerido}. & Mira las tres señales. \\
+\bottomrule
+\end{longtable}
+\end{center}
+
+\section{Si nada de esto sirve}
+Antes de pedir ayuda, reúne:
+\begin{enumerate}
+\item la versión de la librería (en el panel de librerías, columna \menu{Version});
+\item una captura de la tabla de observación con las etapas de \cod{Est\_DB\_Estacion};
+\item los valores de tus máscaras y de \cod{Direccion\_lectura};
+\item el mensaje de error completo, si hay.
+\end{enumerate}
+Con eso casi siempre se encuentra el problema en pocos minutos.

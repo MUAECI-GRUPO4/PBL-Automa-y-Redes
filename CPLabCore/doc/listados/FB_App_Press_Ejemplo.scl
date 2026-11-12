@@ -1,0 +1,138 @@
+FUNCTION_BLOCK "FB_App_Press_Ejemplo"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT
+      // --- contrato con la libreria ---
+      App_inicio : Bool;
+      Emergencia : Bool;
+      // --- senales fisicas de la prensa: cablealas a tus tags en Main (nombres de ejemplo) ---
+      Prensa_arriba : Bool;            // final de carrera superior
+      Prensa_presion_inferior : Bool;  // llega a la presion de prensado
+      Hay_tapa_trasera : Bool;         // sensor: hay tapa trasera en el palet
+   END_VAR
+
+   VAR_OUTPUT
+      // --- contrato con la libreria ---
+      App_en_reposo : Bool;
+      App_terminada : Bool;
+      App_alarma : Bool;
+      App_rearme_requerido : Bool;
+      Inhibir_cinta : Bool;
+      // --- actuadores fisicos ---
+      Prensa_bajar : Bool;
+      Prensa_subir : Bool;
+   END_VAR
+
+   VAR_IN_OUT
+      Imagen_palet : Array[0..27] of Byte;
+   END_VAR
+
+   VAR
+      Etapa_app : Int;
+      Golpes_pedidos : Int;
+      Golpes_hechos : Int;
+      Tiempo_prensado : Time;
+      T_mantener {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+   END_VAR
+
+   VAR CONSTANT
+      // Bytes del tag que usa Press (ver Mapa_RFID_CPLab.xlsx)
+      IDX_ESTACIONES_A_REALIZAR : Int := 3;
+      IDX_ESTACIONES_COMPLETADAS : Int := 4;
+      IDX_ESTADO_BACKCOVER : Int := 12;
+      IDX_NUM_GOLPES : Int := 13;
+      IDX_TIEMPO_ALTO : Int := 14;     // INT big-endian: byte 14 = alto, byte 15 = bajo
+      IDX_TIEMPO_BAJO : Int := 15;
+      IDX_GOLPES_HECHOS : Int := 16;
+      BIT_PRESS : Byte := 16#04;       // bit 2 de las mascaras de estacion
+      BIT_TAPA_COLOCADA : Byte := 16#02;
+      TIEMPO_POR_DEFECTO_MS : DInt := 2000;
+   END_VAR
+
+
+BEGIN
+    #App_en_reposo := FALSE;
+    #App_terminada := FALSE;
+    #App_alarma := FALSE;
+    #Inhibir_cinta := FALSE;
+    #Prensa_bajar := FALSE;
+    #Prensa_subir := FALSE;
+
+    CASE #Etapa_app OF
+        0:  // REPOSO
+            #App_en_reposo := #Prensa_arriba;
+            IF #App_inicio AND #App_en_reposo THEN
+                // Press actua si su bit esta en "estaciones a realizar" o si ese byte vale 0 (actuan todas)
+                IF #Imagen_palet[#IDX_ESTACIONES_A_REALIZAR] = 0
+                   OR (#Imagen_palet[#IDX_ESTACIONES_A_REALIZAR] AND #BIT_PRESS) <> 0 THEN
+                    // necesita la tapa trasera: marcada en el tag y presente en el sensor
+                    IF (#Imagen_palet[#IDX_ESTADO_BACKCOVER] AND #BIT_TAPA_COLOCADA) <> 0 AND #Hay_tapa_trasera THEN
+                        #Golpes_pedidos := BYTE_TO_INT(#Imagen_palet[#IDX_NUM_GOLPES]);
+                        IF #Golpes_pedidos = 0 THEN
+                            #Golpes_pedidos := 1;     // 0 = "se usa 1 golpe"
+                        END_IF;
+                        #Tiempo_prensado := DINT_TO_TIME(WORD_TO_INT(SHL(IN := BYTE_TO_WORD(#Imagen_palet[#IDX_TIEMPO_ALTO]), N := 8)
+                                            OR BYTE_TO_WORD(#Imagen_palet[#IDX_TIEMPO_BAJO])));
+                        IF #Tiempo_prensado = T#0ms THEN
+                            #Tiempo_prensado := DINT_TO_TIME(#TIEMPO_POR_DEFECTO_MS);
+                        END_IF;
+                        #Golpes_hechos := 0;
+                        #Etapa_app := 10;
+                    ELSE
+                        #Etapa_app := 40;             // sin tapa trasera: no se prensa, no se marca como completada
+                    END_IF;
+                ELSE
+                    #Etapa_app := 50;                 // esta estacion no se pide: el palet pasa sin tocar nada
+                END_IF;
+            END_IF;
+
+        10: // BAJAR hasta la presion inferior
+            #Prensa_bajar := TRUE;
+            IF #Prensa_presion_inferior THEN
+                #Etapa_app := 20;
+            END_IF;
+
+        20: // MANTENER el tiempo de prensado
+            #Prensa_bajar := TRUE;
+            IF #T_mantener.Q THEN
+                #Etapa_app := 30;
+            END_IF;
+
+        30: // SUBIR; si quedan golpes, otra vez
+            #Prensa_subir := TRUE;
+            IF #Prensa_arriba THEN
+                #Golpes_hechos := #Golpes_hechos + 1;
+                IF #Golpes_hechos >= #Golpes_pedidos THEN
+                    #Etapa_app := 40;
+                ELSE
+                    #Etapa_app := 10;
+                END_IF;
+            END_IF;
+
+        40: // ESCRIBIR en el tag: golpes realizados y bit de Press completada (solo si se ha prensado)
+            #Imagen_palet[#IDX_GOLPES_HECHOS] := INT_TO_BYTE(#Golpes_hechos);
+            IF #Golpes_hechos > 0 THEN
+                #Imagen_palet[#IDX_ESTACIONES_COMPLETADAS] := #Imagen_palet[#IDX_ESTACIONES_COMPLETADAS] OR #BIT_PRESS;
+            END_IF;
+            #Etapa_app := 50;
+
+        50: // FIN: se mantiene hasta que la estacion baja App_inicio
+            #App_terminada := TRUE;
+            IF NOT #App_inicio THEN
+                #Golpes_hechos := 0;
+                #Etapa_app := 0;
+            END_IF;
+
+        ELSE
+            #Etapa_app := 0;
+    END_CASE;
+
+    #T_mantener(IN := #Etapa_app = 20, PT := #Tiempo_prensado);
+
+    // Emergencia: todo a seguro y vuelta a reposo
+    IF #Emergencia THEN
+        #Etapa_app := 0;
+        #Prensa_bajar := FALSE;
+        #Prensa_subir := FALSE;
+    END_IF;
+END_FUNCTION_BLOCK

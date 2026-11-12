@@ -1,0 +1,115 @@
+FUNCTION_BLOCK "Est_FB_Modo"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Seta_emergencia : Bool;
+      Boton_rearme : Bool;
+      Boton_marcha : Bool;
+      Boton_paro : Bool;
+      Selector_automatico : Bool;
+      Condicion_arranque_auto : Bool;
+      Condicion_arranque_manual : Bool;
+      Ciclo_manual_acabado : Bool;
+   END_VAR
+
+   VAR_IN_OUT 
+      Modo_auto : Bool;
+      Modo_manual : Bool;
+      Ciclo_auto_activo : Bool;
+      Ciclo_manual_activo : Bool;
+      Emergencia : Bool;
+      Rearme_requerido : Bool;
+      Marcha_permitida : Bool;
+   END_VAR
+
+   VAR 
+      Etapa_emergencia { S7_SetPoint := 'True'} : Int := 10;
+      Etapa_modo : Int := 20;
+      Etapa_ciclo : Int := 30;
+      Flanco_marcha {InstructionName := 'R_TRIG'; LibVersion := '1.0'} : R_TRIG;
+      Flanco_rearme {InstructionName := 'R_TRIG'; LibVersion := '1.0'} : R_TRIG;
+   END_VAR
+
+
+BEGIN
+	#Modo_auto := FALSE;
+	#Modo_manual := FALSE;
+	#Ciclo_auto_activo := FALSE;
+	#Ciclo_manual_activo := FALSE;
+	#Emergencia := FALSE;
+	#Rearme_requerido := FALSE;
+	#Marcha_permitida := FALSE;
+	
+	#Flanco_marcha(CLK:=#Boton_marcha);
+	#Flanco_rearme(CLK:=#Boton_rearme);
+	
+	CASE #Etapa_emergencia OF
+	    10:  //NORMAL
+	        IF #Seta_emergencia THEN
+	            #Etapa_emergencia := 11;
+	        END_IF;
+	        ;
+	    11:  //EMERGENCIA
+	        #Emergencia := TRUE;
+	        #Rearme_requerido := TRUE;
+	        IF #Flanco_rearme.Q AND NOT #Seta_emergencia THEN
+	            #Etapa_emergencia := 10;
+	        END_IF;
+	        ;
+	    ELSE
+	        #Etapa_emergencia := 11;
+	        ;
+	END_CASE;
+	
+	CASE #Etapa_modo OF
+	    20:  // MANUAL
+	        #Modo_manual := TRUE;
+	        IF #Selector_automatico THEN
+	            #Etapa_modo := 21;
+	        END_IF;
+	        ;
+	    21:  // AUTOMATICO
+	        #Modo_auto := TRUE;
+	        IF NOT #Selector_automatico THEN
+	            #Etapa_modo := 20;
+	        END_IF;
+	        ;
+	    ELSE
+	        #Etapa_modo := 20;
+	        #Etapa_emergencia := 11;
+	        ;
+	END_CASE;
+	
+	CASE #Etapa_ciclo OF
+	    30:  // REPOSO
+	        IF NOT #Emergencia AND ((#Modo_auto AND #Condicion_arranque_auto) OR (#Modo_manual AND #Condicion_arranque_manual)) THEN
+	            #Marcha_permitida := TRUE;
+	        END_IF;
+	        
+	        IF #Marcha_permitida AND #Flanco_marcha.Q AND #Modo_auto THEN
+	            #Etapa_ciclo := 31;
+	        ELSIF #Marcha_permitida AND #Flanco_marcha.Q AND #Modo_manual THEN
+	            #Etapa_ciclo := 32;
+	        END_IF;
+	        ;
+	    31:  // AUTOMATICO ACTIVO
+	        #Ciclo_auto_activo := TRUE;
+	        IF #Boton_paro OR #Emergencia OR NOT #Modo_auto THEN
+	            #Etapa_ciclo := 30;
+	        END_IF;
+	        ;
+	    32:  //MANUAL ACTIVO
+	        #Ciclo_manual_activo := TRUE;
+	        IF #Boton_paro OR #Emergencia OR NOT #Modo_manual OR #Ciclo_manual_acabado THEN
+	            #Etapa_ciclo := 30;
+	        END_IF;
+	        ;
+	    ELSE
+	        #Etapa_ciclo := 30;
+	        #Etapa_emergencia := 11;
+	        ;
+	END_CASE;
+	
+	
+END_FUNCTION_BLOCK
+

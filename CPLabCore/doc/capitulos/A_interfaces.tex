@@ -1,0 +1,57 @@
+\chapter{Hoja de referencia rápida}\label{ap:referencia}
+Una página para tener a mano cuando ya conoces la librería.
+
+\section*{Lo que cambia en cada estación}
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\ttfamily}p{4.2cm}X}
+\toprule
+\textnormal{\textbf{Qué}} & \textbf{Dónde} \\
+\midrule
+Mascara\_lectura, Mascara\_escritura & En la llamada a \cod{Est\_FB\_Estacion} de \cod{Main} (capítulo~\ref{cap:mapa}). \\
+Direccion\_lectura, Direccion\_escritura & Igual, las dos iguales (por defecto \cod{16\#0000}). \\
+Tu aplicación & Un bloque tuyo, copia de \cod{Est\_FB\_App\_Plantilla}. \\
+Tus constantes \cod{IDX\_*} & Dentro de tu aplicación. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section*{El contrato (desde tu aplicación)}
+\begin{center}
+\small
+\begin{tabular}{>{\ttfamily}l l >{\ttfamily}l l}
+\toprule
+\textnormal{\textbf{Recibes}} & & \textnormal{\textbf{Entregas}} & \\
+\midrule
+App\_inicio & empieza & App\_en\_reposo & lista para un palet \\
+Emergencia & hay emergencia & App\_terminada & acabé; resultado en la imagen \\
+Rearme & pulso de rearme & App\_alarma & parpadeo Q2 (opcional) \\
+Imagen\_palet & 28 bytes & App\_rearme\_requerido & luz de rearme (opcional) \\
+ & & Inhibir\_cinta & la cinta no se mueve \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Las siete reglas de la aplicación}
+R1 Declara tu reposo.\quad R2 Empieza solo con \cod{App\_inicio} y en reposo.\quad R3 Termina con \cod{App\_terminada} y mantenla hasta que \cod{App\_inicio} baje.\quad R4 El resultado, en la imagen, antes de terminar.\quad R5 Toca solo tus bytes.\quad R6 Obedece la emergencia.\quad R7 No esperes un límite de tiempo: ponlo tú.
+
+\section*{Las reglas de oro de las máscaras}
+O1 Todo byte que escribes, también lo lees.\quad O2 Escribe solo tus bytes.\quad O3 Las banderas, con OR.\quad O4 Un 0 significa «sin dato».\quad O5 La misma dirección para leer y escribir.\quad O6 Los bytes 20 a 27, solo si se ha acordado.\quad O7 Los números de dos bytes, juntos.
+
+\section*{Calcular una máscara}
+Para cada byte $n$ de la lista, súmale $2^{n}$ \,(byte 0 = 1, byte 1 = 2, byte 2 = 4, byte 3 = 8, byte 4 = \cod{10}, byte 5 = \cod{20}\dots). En hexadecimal: cada grupo de cuatro bytes es un dígito, con valores 1, 2, 4 y 8.
+
+\begin{center}
+\footnotesize\setlength{\tabcolsep}{2.0pt}
+\begin{tabular}{l|cccc|cccc|cccc|cccc|cccc|cccc|cccc}
+Dígito & \multicolumn{4}{c|}{1.º} & \multicolumn{4}{c|}{2.º} & \multicolumn{4}{c|}{3.º} & \multicolumn{4}{c|}{4.º} & \multicolumn{4}{c|}{5.º} & \multicolumn{4}{c|}{6.º} & \multicolumn{4}{c}{7.º} \\
+Bytes & 0&1&2&3 & 4&5&6&7 & 8&9&10&11 & 12&13&14&15 & 16&17&18&19 & 20&21&22&23 & 24&25&26&27 \\
+Valor & 1&2&4&8 & 1&2&4&8 & 1&2&4&8 & 1&2&4&8 & 1&2&4&8 & 1&2&4&8 & 1&2&4&8 \\
+\end{tabular}
+\end{center}
+
+\section*{Las máscaras del grupo}
+\input{datos/tabla_mascaras.tex}
+
+\section*{Las siete tags}
+\cod{Entradas\_APP} \cod{\%I0.0}, \cod{Entradas\_Basico} \cod{\%I1.0}, \cod{Entradas\_RFID} \cod{\%I10.0}, \cod{Entradas\_Stopper} \cod{\%I42.0}, \cod{Salidas\_APP} \cod{\%Q0.0}, \cod{Salidas\_Basico} \cod{\%Q1.0}, \cod{Salidas\_RFID} \cod{\%Q10.0}.

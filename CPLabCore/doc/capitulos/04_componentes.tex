@@ -1,0 +1,335 @@
+\chapter{Los componentes por dentro}\label{cap:componentes}
+
+Este capítulo explica, bloque por bloque, qué hace cada pieza de la librería, cómo se comporta y qué pines tiene. No necesitas aprendértelo: sirve para entender por qué la estación hace lo que hace y para saber dónde mirar cuando algo no va. Las tablas de pines están escritas para consultarlas.
+
+\begin{consejo}
+Todos los bloques siguen el mismo estilo: una máquina de estados con \texttt{CASE}, un número de etapa en una variable interna y las salidas puestas a su valor seguro al principio de cada ciclo. Si has leído uno, los demás se leen igual.
+\end{consejo}
+
+%=====================================================================
+\section{\texttt{Est\_FB\_Estacion}: el director de orquesta}\label{sec:estacion}
+Es el único bloque que llamas desde \cod{Main} (junto con tu aplicación). Dentro tiene una instancia de cada uno de los otros tres y los llama en orden. Hace tres cosas:
+
+\begin{enumerate}
+\item Calcula las \emph{condiciones} para que la estación pueda arrancar y para que la cinta pueda moverse.
+\item Lleva la \textbf{secuencia del palet}, la máquina de estados de la figura~\ref{fig:fsm-gestion}.
+\item Conecta las señales: pasa las entradas físicas a los otros bloques, y sus salidas a las luces, a la cinta, al lector y a tu aplicación.
+\end{enumerate}
+
+\subsection{La secuencia del palet}
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[estado] (s0) at (0,0) {0\\espera};
+\node[estado] (s1) at (3.4,0) {1\\leer};
+\node[estado,fill=naranja!15,draw=naranja] (s2) at (6.8,0) {2\\app};
+\node[estado] (s3) at (10.2,0) {3\\escribir};
+\node[estado] (s4) at (13.6,0) {4\\evacuar};
+\node[estado] (s5) at (13.6,-2.8) {5\\fin};
+\node[estado,fill=rojo!10,draw=rojo] (s6) at (6.8,3.0) {6\\fallo\\RFID};
+\draw[flecha] (s0) -- node[etiqueta,above] {palet en posición} (s1);
+\draw[flecha] (s1) -- node[etiqueta,above] {lectura ok} (s2);
+\draw[flecha] (s2) -- node[etiqueta,above] {\cod{App\_terminada}} (s3);
+\draw[flecha] (s3) -- node[etiqueta,above] {escritura ok} (s4);
+\draw[flecha] (s4) -- node[etiqueta,right] {palet fuera} (s5);
+\draw[flecha,rounded corners=4pt] (s5.south) -- ++(0,-0.9) -| node[etiqueta,pos=0.2,below] {siguiente palet} (s0.south);
+\draw[flecha,rojo!80,rounded corners=4pt] (s1.north) |- node[etiqueta,pos=0.7,above,text=rojo] {error RFID} (s6.west);
+\draw[flecha,rojo!80,rounded corners=4pt] (s3.north) |- node[etiqueta,pos=0.7,above,text=rojo] {error RFID} (s6.east);
+\draw[flecha,rojo!80,rounded corners=4pt] (s6.north) -- ++(0,0.8) -| node[etiqueta,pos=0.25,above,text=rojo] {rearme: se evacúa sin procesar} (s4.north);
+\node[etiqueta,align=left,anchor=north west,font=\sffamily\scriptsize] at (-0.8,-1.5) {Desde cualquier etapa:\\\textbf{Emergencia} $\rightarrow$ etapa 0};
+\end{tikzpicture}
+\caption{Secuencia del palet (\cod{Etapa\_gestion}). El camino rojo es el del fallo del lector.}
+\label{fig:fsm-gestion}
+\end{figure}
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries}p{1.2cm}p{3.3cm}X}
+\toprule
+Etapa & Qué activa & Para pasar a la siguiente \\
+\midrule
+0 & nada & ciclo auto o manual activo, palet en posición y sin emergencia. \\
+1 & \cod{Orden\_leer} & \cod{Rfid\_lectura\_ok}. Si hay \cod{Rfid\_error}, a la 6. \\
+2 & \cod{App\_inicio} & \cod{App\_terminada} (la sube tu aplicación). \\
+3 & \cod{Orden\_escribir} & \cod{Rfid\_escritura\_ok}. Si hay \cod{Rfid\_error}, a la 6. \\
+4 & \cod{Orden\_evacuar} (le dice a la cinta que suelte el palet) & \cod{Palet\_evacuado}. \\
+5 & (fin del palet; en manual, termina el ciclo manual) & pasa a la 0 de inmediato. \\
+6 & \cod{Rearme\_requerido\_gestion} (enciende la luz de rearme) & flanco del botón de rearme: evacúa el palet sin procesarlo (a la 4). \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Las condiciones de arranque}
+La estación solo puede arrancar un ciclo cuando se cumplen a la vez estas condiciones iniciales (\cod{Estacion\_cond\_iniciales}):
+\begin{itemize}
+\item no hay emergencia;
+\item el stopper no está bajado;
+\item \textbf{tu aplicación está en reposo} (\cod{App\_en\_reposo}); es aquí donde tu aplicación puede impedir el arranque, por ejemplo si su mecanismo no está en la posición inicial;
+\item no hay un error de RFID pendiente.
+\end{itemize}
+En modo automático eso basta para dar \cod{Marcha\_permitida} (se enciende la luz del botón de marcha). En modo manual, además, tiene que haber un palet en la estación. La cinta solo se mueve mientras haya un ciclo activo y sin emergencia (\cod{Cinta\_habilitada}).
+
+\subsection{Luces y salidas que gobierna}
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\ttfamily\small}p{4.1cm}X}
+\toprule
+\textnormal{\textbf{Salida}} & \textbf{Cuándo se enciende} \\
+\midrule
+Led\_boton\_marcha & hay marcha permitida. \\
+Led\_boton\_rearme & se pide rearme: tras emergencia, tras un fallo del RFID, o porque tu aplicación activa \cod{App\_rearme\_requerido}. \\
+Led\_q1\_ciclo\_auto & el ciclo automático está activo. \\
+Led\_q2\_emergencia & hay emergencia, o tu aplicación activa \cod{App\_alarma}. Si tu \cod{App\_alarma} parpadea, la luz parpadea. \\
+Cinta\_dch & la cinta se mueve a la derecha (la decide \cod{Est\_FB\_Cinta}); se fuerza a apagado si \cod{Inhibir\_cinta} está activa. \\
+Cinta\_izq, Cinta\_velocidad\_baja & siempre apagadas. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Pines}
+\begin{center}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\ttfamily}p{3.5cm}>{\raggedright\arraybackslash}p{1.1cm}>{\raggedright\arraybackslash\ttfamily}p{2.4cm}X}
+\toprule
+\textnormal{\textbf{Pin}} & \textbf{Dir.} & \textnormal{\textbf{Tipo}} & \textbf{Descripción} \\
+\midrule
+InBasico & entrada & UDT\_Entradas\_Basico & Botonera y sensores de la cinta (\cod{\%I1.0}). \\
+InRFID & entrada & UDT\_Entradas\_RFID & Señales y datos del lector (\cod{\%I10.0}). \\
+InStopper & entrada & UDT\_Entradas\_Stopper & Sensores del stopper (\cod{\%I42.0}). \\
+Direccion\_lectura & entrada & Word & Dirección de inicio del bloque en el tag, para leer. Por defecto \cod{16\#0000}. \\
+Direccion\_escritura & entrada & Word & Igual, para escribir. Por defecto \cod{16\#0000}. \\
+Mascara\_lectura & entrada & DWord & Bytes del bloque que se leen a la imagen. Por defecto \cod{16\#0FFFFFFF} (todos). \\
+Mascara\_escritura & entrada & DWord & Bytes de la imagen que se escriben. Por defecto \cod{16\#00000000} (ninguno). \\
+App\_en\_reposo & entrada & Bool & Tu aplicación está lista para un palet. \\
+App\_terminada & entrada & Bool & Tu aplicación ha terminado con este palet. \\
+App\_alarma & entrada & Bool & Alarma de tu aplicación (parpadeo en la luz Q2). \\
+App\_rearme\_requerido & entrada & Bool & Tu aplicación pide rearme (luz del botón). \\
+Inhibir\_cinta & entrada & Bool & Si es verdadera, la cinta no se mueve. \\
+\midrule
+App\_inicio & salida & Bool & Orden de empezar a tu aplicación. \\
+Emergencia & salida & Bool & Hay emergencia. \\
+Rearme & salida & Bool & Pulso al pulsar rearme. \\
+\midrule
+OutBasico & in/out & UDT\_Salidas\_Basico & Luces, cinta y stopper (\cod{\%Q1.0}). \\
+OutRFID & in/out & UDT\_Salidas\_RFID & Órdenes y datos al lector (\cod{\%Q10.0}). \\
+Imagen\_palet & in/out & Array[0..27] of Byte & La imagen del palet (la comparte con tu aplicación). \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{ojo}
+Los tres pines \cod{Direccion\_*} y los dos \cod{Mascara\_*} \textbf{son los que adaptas a tu estación}. Todo lo demás se cablea siempre igual en todas las estaciones.
+\end{ojo}
+
+%=====================================================================
+\section{\texttt{Est\_FB\_Modo}: botones, modos y emergencia}\label{sec:modo}
+Este bloque contiene tres máquinas de estados pequeñas e independientes entre sí (figura~\ref{fig:fsm-modo}).
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+% Emergencia
+\node[font=\sffamily\bfseries\small,anchor=east] at (-0.6,7.0) {Emergencia};
+\node[estado] (n10) at (2.2,7.0) {10\\normal};
+\node[estado,fill=rojo!10,draw=rojo] (n11) at (8.2,7.0) {11\\emerg.};
+\draw[flecha] (n10.north east) to[bend left=28] node[etiqueta,above] {seta pulsada} (n11.north west);
+\draw[flecha] (n11.south west) to[bend left=28] node[etiqueta,below] {rearme y seta suelta} (n10.south east);
+% Modo
+\node[font=\sffamily\bfseries\small,anchor=east] at (-0.6,4.0) {Modo};
+\node[estado] (m20) at (2.2,4.0) {20\\manual};
+\node[estado] (m21) at (8.2,4.0) {21\\auto};
+\draw[flecha] (m20.north east) to[bend left=28] node[etiqueta,above] {selector en auto} (m21.north west);
+\draw[flecha] (m21.south west) to[bend left=28] node[etiqueta,below] {selector en manual} (m20.south east);
+% Ciclo
+\node[font=\sffamily\bfseries\small,anchor=east] at (-0.6,0.0) {Ciclo};
+\node[estado] (c30) at (2.2,0) {30\\reposo};
+\node[estado,fill=verde!12,draw=verde] (c31) at (8.2,1.35) {31\\auto};
+\node[estado,fill=verde!12,draw=verde] (c32) at (8.2,-1.35) {32\\manual};
+\draw[flecha] (c30) to[bend left=14] node[etiqueta,above,sloped] {marcha (auto)} (c31);
+\draw[flecha,rojo!70] (c31) to[bend left=14] (c30);
+\draw[flecha] (c30) to[bend right=14] node[etiqueta,below,sloped] {marcha (manual)} (c32);
+\draw[flecha,rojo!70] (c32) to[bend right=14] (c30);
+\node[etiqueta,text=rojo,anchor=north west,align=left] at (3.6,-2.5) {flechas rojas: paro, emergencia, cambio de modo\\(y, en manual, ciclo manual acabado)};
+\end{tikzpicture}
+\caption{Las tres máquinas de \cod{Est\_FB\_Modo}.}
+\label{fig:fsm-modo}
+\end{figure}
+
+\begin{description}[style=nextline,leftmargin=1.2cm]
+\item[Emergencia.] Empieza en normal (etapa 10). Al pulsar la seta pasa a emergencia (11): activa \cod{Emergencia} y \cod{Rearme\_requerido}. Para volver a normal hace falta \textbf{soltar la seta y dar un flanco de rearme}. Con la seta pulsada, el rearme no basta.
+\item[Modo.] Sigue al selector: manual (20) o automático (21). Cambiar de modo a mitad de ciclo lo detiene.
+\item[Ciclo.] En reposo (30), si la estación puede arrancar (\cod{Condicion\_arranque\_auto} o \cod{\_manual}, según el modo) y no hay emergencia, activa \cod{Marcha\_permitida}. Con \cod{Marcha\_permitida}, un flanco del botón de marcha inicia el ciclo automático (31) o el manual (32). El ciclo termina con el paro, con una emergencia, con un cambio de modo o, en manual, cuando se ha terminado el palet (\cod{Ciclo\_manual\_acabado}).
+\end{description}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\ttfamily}p{3.7cm}>{\raggedright\arraybackslash}p{1.1cm}>{\raggedright\arraybackslash\ttfamily}p{1.0cm}X}
+\toprule
+\textnormal{\textbf{Pin}} & \textbf{Dir.} & \textnormal{\textbf{Tipo}} & \textbf{Descripción} \\
+\midrule
+Seta\_emergencia & entrada & Bool & Vale verdadero cuando \emph{hay} emergencia. \cod{Est\_FB\_Estacion} le pasa la señal ya invertida, porque la seta es de contacto cerrado. \\
+Boton\_rearme, Boton\_marcha & entrada & Bool & Pulsadores. \\
+Boton\_paro & entrada & Bool & Verdadero cuando se \emph{pulsa} el paro (también invertido, porque el paro es de contacto cerrado). \\
+Selector\_automatico & entrada & Bool & Verdadero en automático. \\
+Condicion\_arranque\_auto, Condicion\_arranque\_manual & entrada & Bool & Condiciones de arranque calculadas por \cod{Est\_FB\_Estacion}. \\
+Ciclo\_manual\_acabado & entrada & Bool & Termina el ciclo manual. \\
+Modo\_auto, Modo\_manual, Ciclo\_auto\_activo, Ciclo\_manual\_activo, Emergencia, Rearme\_requerido, Marcha\_permitida & in/out & Bool & Estados de salida; \cod{Est\_FB\_Estacion} los guarda en \cod{UDT\_Estado}. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+%=====================================================================
+\section{\texttt{Est\_FB\_Cinta}: la cinta y el stopper}\label{sec:cinta}
+Controla la cinta y el stopper (el tope que frena el palet en la posición de trabajo) y lleva la cuenta de cuántos palets hay en la cinta, para saber si viene otro detrás. Su máquina de estados está en la figura~\ref{fig:fsm-cinta}.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[estado] (c0) at (0,0) {0\\parada};
+\node[estado] (c1) at (3.6,1.5) {1\\avance};
+\node[estado,fill=verde!12,draw=verde] (c3) at (7.4,0) {3\\en tope};
+\node[estado] (c4) at (11.8,0) {4\\liberar};
+\node[estado] (c5) at (11.8,-3.0) {5\\sacar};
+\node[estado] (c6) at (7.4,-3.0) {6\\salir};
+\node[estado] (c7) at (3.6,-3.0) {7\\terminar};
+\draw[flecha] (c0) -- node[etiqueta,above,sloped] {entra un palet} (c1);
+\draw[flecha] (c1) -- node[etiqueta,above,sloped] {llega al tope} (c3);
+\draw[flecha] (c0) -- node[etiqueta,above] {ya hay palet en el tope} (c3);
+\draw[flecha] (c3) -- node[etiqueta,above] {\cod{Orden\_evacuar}} (c4);
+\draw[flecha] (c4) -- node[etiqueta,right] {stopper abajo} (c5);
+\draw[flecha] (c5) -- node[etiqueta,above,align=center] {0,4\,s o\\sensor dch.} (c6);
+\draw[flecha] (c6) -- node[etiqueta,above] {palet salió} (c7);
+\draw[flecha,rounded corners=4pt] (c7.west) -| node[etiqueta,pos=0.38,above] {\cod{Palet\_evacuado}} (c0.south);
+\node[etiqueta,align=left,anchor=north west,font=\sffamily\scriptsize] at (-0.8,-4.6) {Desde cualquier etapa: \textbf{Emergencia} $\rightarrow$ etapa 0, cinta y stopper parados, contador a 0.\\Las etapas 1 y 6 tienen un límite de 10\,s: si el palet no llega o no sale, vuelven a una situación segura.};
+\end{tikzpicture}
+\caption{Máquina de estados de la cinta (\cod{Etapa\_cinta}).}
+\label{fig:fsm-cinta}
+\end{figure}
+
+Además de las etapas, el bloque calcula dos señales que usa el director:
+\begin{itemize}
+\item \cod{Palet\_en\_posicion}: hay un palet parado en el tope, listo para trabajar (etapa 3).
+\item \cod{Palet\_en\_estacion}: hay algún palet en algún punto de la estación (los sensores lo ven o el contador no es cero). La usa el modo manual.
+\end{itemize}
+
+\begin{ojo}
+La etapa 2 (``asentar'') existe en el código pero ninguna transición llega a ella en esta versión. No es un error: es un resto de una versión anterior. Se puede ignorar. Y la etapa 4 avanza cuando \cod{Sensor\_stopper\_abajo} \emph{deja} de estar activo: conviene comprobar la polaridad de ese sensor en la maqueta real (apéndice~\ref{ap:abiertos}).
+\end{ojo}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\ttfamily}p{4.0cm}>{\raggedright\arraybackslash}p{1.1cm}X}
+\toprule
+\textnormal{\textbf{Pin}} & \textbf{Dir.} & \textbf{Descripción} \\
+\midrule
+Emergencia & entrada & Viene de \cod{Est\_FB\_Modo}. \\
+Cinta\_habilitada & entrada & Ciclo activo y sin emergencia. \\
+Orden\_evacuar & entrada & La aplicación ya terminó y el tag está escrito: soltar el palet. \\
+Sensor\_palet\_izq, Sensor\_palet\_dch & entrada & Extremos de la cinta. \\
+Sensor\_ind\_bien\_pos & entrada & Palet apoyado en el stopper (posición de trabajo). \\
+Sensor\_stopper\_abajo & entrada & Confirmación del stopper. \\
+Cinta\_dch, Bajar\_stopper & in/out & Actuadores. \\
+Palet\_en\_posicion, Palet\_en\_estacion, Palet\_evacuado & in/out & Salidas de estado. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+%=====================================================================
+\section{\texttt{Est\_FB\_RFID}: el lector}\label{sec:rfid}
+Es el bloque más delicado, porque el lector tiene un protocolo exigente (sección~\ref{cap:conceptos}) y porque aquí viven las máscaras. Se encarga de encender la antena, esperar a que detecte el tag, hacer una lectura o una escritura de 28 bytes y comprobar que ha acabado bien, con un límite de \textbf{5\,s} por operación.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[estado] (r0) at (0,0) {0\\reposo};
+\node[estado] (r1) at (3.1,0) {1\\energizar};
+\node[estado] (r2) at (6.2,0) {2\\listo};
+\node[estado,fill=azul!22] (r3) at (9.3,1.3) {3\\leer};
+\node[estado,fill=azul!22] (r4) at (9.3,-1.3) {4\\escribir};
+\node[estado,fill=verde!12,draw=verde] (r5) at (12.4,1.3) {5\\leído};
+\node[estado,fill=verde!12,draw=verde] (r6) at (12.4,-1.3) {6\\escrito};
+\node[estado,fill=rojo!10,draw=rojo] (r8) at (6.2,-3.1) {8\\error};
+\draw[flecha] (r0) -- node[etiqueta,above] {orden} (r1);
+\draw[flecha] (r1) -- node[etiqueta,above,align=center] {tag\\detectado} (r2);
+\draw[flecha] (r2) -- (r3);
+\draw[flecha] (r2) -- (r4);
+\draw[flecha] (r3) -- (r5);
+\draw[flecha] (r4) -- (r6);
+\draw[flecha,rojo!80] (r1) -- (r8);
+\draw[flecha,rojo!80] (r3) to[bend left=0] (r8);
+\draw[flecha,rojo!80] (r4) -- (r8);
+\draw[flechag,rounded corners=3pt] (r5.north) -- ++(0,0.8) -| node[etiqueta,pos=0.25,above] {orden leer baja} (r0.north);
+\draw[flechag,rounded corners=3pt] (r6.south) -- ++(0,-0.9) -| (r0.south);
+\node[etiqueta,align=left,anchor=north west,font=\sffamily\scriptsize] at (-0.8,-3.0) {Error: lector con error o 5\,s sin\\respuesta. Sale al bajar las órdenes.\\Emergencia $\rightarrow$ etapa 0 y antena apagada.};
+\end{tikzpicture}
+\caption{Máquina de estados del lector.}
+\label{fig:fsm-rfid}
+\end{figure}
+
+\subsection{Cómo lee}
+\begin{enumerate}
+\item \textbf{Energizar (1).} Enciende la antena y espera: antena no apagada, tag detectado, lector listo.
+\item \textbf{Listo (2).} Espera la orden. Si es leer, va a la etapa 3.
+\item \textbf{Leer (3).} Escribe la dirección de inicio (\cod{Direccion\_lectura}) y activa \cod{Tag\_leer}. El lector baja \emph{proceso listo} (ha empezado, y el bloque lo anota en \cod{Rfid\_ocupado}), lee, y vuelve a subirlo. Solo cuando \emph{listo} ha bajado y vuelto a subir, \cod{Tag\_datos\_leidos} está activo y la dirección devuelta coincide con la pedida, el dato vale. Entonces:
+  \begin{itemize}
+  \item copia los 28 bytes recibidos en la copia interna \cod{Imagen\_leida};
+  \item rellena \cod{Imagen\_palet} con los bytes cuyo bit está en \cod{Mascara\_lectura}, y \textbf{pone a cero} los demás;
+  \item pasa a «leído» (5), que deja \cod{Rfid\_lectura\_ok} activo hasta que la orden de leer baje.
+  \end{itemize}
+\end{enumerate}
+
+\subsection{Cómo escribe}
+Es la operación simétrica. En la etapa 4, a cada ciclo, \textbf{construye el bloque que va al tag}: para cada byte $i$ de 0 a 27,
+\begin{itemize}
+\item si el bit $i$ de \cod{Mascara\_escritura} está a 1, usa el byte $i$ de \cod{Imagen\_palet} (el que dejó tu aplicación);
+\item si está a 0, usa el byte $i$ de \cod{Imagen\_leida}, es decir, \textbf{el mismo valor que tenía al leer}.
+\end{itemize}
+Con eso, la escritura de 28 bytes es inofensiva para los bytes de las demás estaciones. Cuando el lector confirma (con la dirección \cod{Direccion\_escritura}), pasa a «escrito» (6).
+
+\begin{peligro}
+Esto solo funciona si \textbf{la misma estación ha leído antes} el palet con la misma dirección. Por eso la secuencia siempre es «leer, trabajar, escribir» en el mismo palet. Si algún día una estación escribe sin haber leído, los bytes ajenos se escribirían con lo último que se leyó, que podría ser de otro palet. La librería no permite esta situación en su secuencia normal, pero tenlo presente si escribes cosas especiales.
+\end{peligro}
+
+\subsection{Errores}
+Si \cod{Tag\_error} se activa, o la operación tarda más de 5\,s en alguna de las etapas 1, 3 o 4, el bloque pasa al estado de error (8): activa \cod{Rfid\_error}, guarda el código que da el lector en \cod{Rfid\_codigo\_error}, apaga la antena y espera a que las órdenes bajen para volver a reposo. \cod{Est\_FB\_Estacion} reacciona con la etapa 6 de la secuencia.
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\ttfamily}p{4.4cm}>{\raggedright\arraybackslash}p{1.1cm}X}
+\toprule
+\textnormal{\textbf{Pin}} & \textbf{Dir.} & \textbf{Descripción} \\
+\midrule
+Orden\_leer, Orden\_escribir & entrada & Órdenes de la secuencia. Una cada vez. \\
+Emergencia & entrada & Aborta la operación y apaga la antena. \\
+Direccion\_lectura, Direccion\_escritura & entrada & Dirección de inicio del bloque, en bytes (Word). \\
+Mascara\_lectura, Mascara\_escritura & entrada & Bytes que se leen o escriben (DWord, un bit por byte). \\
+Tag\_datos\_escritos, Tag\_datos\_leidos, Tag\_antena\_apagada, Tag\_detectado, Tag\_error, Tag\_proceso\_listo & entrada & Señales del lector (\cod{UDT\_Entradas\_RFID}). \\
+Tag\_codigo\_error, Tag\_direccion\_confirmada, Tag\_datos\_leidos\_escritos & entrada & Código de error, dirección que confirma el lector y los 28 bytes leídos. \\
+Tag\_escribir, Tag\_leer, Tag\_antena\_apagar, Tag\_direccion\_leer\_escribir, Tag\_datos\_a\_escribir & in/out & Órdenes, dirección y los 28 bytes que se escriben. \\
+Rfid\_lectura\_ok, Rfid\_escritura\_ok, Rfid\_error, Rfid\_codigo\_error & in/out & Resultado de la operación. \\
+Imagen & in/out & La imagen del palet (28 bytes). \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+%=====================================================================
+\section{Los tipos de datos (UDT)}\label{sec:udts}
+Los seis UDT de la librería agrupan, con nombre, los bits de cada módulo. No hay que aprenderlos de memoria (el apéndice~\ref{ap:direcciones} los lista con su dirección), pero sí saber para qué sirve cada uno:
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\ttfamily\small}p{4.2cm}p{2.4cm}X}
+\toprule
+\textnormal{\textbf{UDT}} & \textbf{Tag y dirección} & \textbf{Qué contiene} \\
+\midrule
+UDT\_Entradas\_Basico & \cod{Entradas\_Basico} \cod{\%I1.0} & Botones de marcha, paro y rearme, selector, seta, sensores de palet en la cinta. \\
+UDT\_Salidas\_Basico & \cod{Salidas\_Basico} \cod{\%Q1.0} & Luces del panel, cinta (derecha, izquierda, lenta), stopper. \\
+UDT\_Entradas\_Stopper & \cod{Entradas\_Stopper} \cod{\%I42.0} & Cuatro sensores inductivos y el sensor «stopper abajo». \\
+UDT\_Entradas\_RFID & \cod{Entradas\_RFID} \cod{\%I10.0} & Estado del lector, código de error, dirección, 28 bytes leídos. \\
+UDT\_Salidas\_RFID & \cod{Salidas\_RFID} \cod{\%Q10.0} & Órdenes de leer y escribir, antena, dirección, 28 bytes a escribir. \\
+UDT\_Estado & (interno) & Estado de la estación: modos, órdenes, errores. Vive dentro de \cod{Est\_FB\_Estacion}. No se toca. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Los miembros llamados \cod{Reservado\_...} y \cod{Tag\_reservado\_...} ocupan los bits que el módulo tiene pero la librería no usa. Están ahí para que los miembros siguientes caigan en el byte y el bit correctos. \textbf{No los borres ni cambies el orden de los miembros}: cada miembro tiene que estar exactamente en el bit que le corresponde del módulo físico.

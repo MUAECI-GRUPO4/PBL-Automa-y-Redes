@@ -1,0 +1,138 @@
+FUNCTION_BLOCK "Est_FB_Cinta"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Emergencia : Bool;   // De  modo
+      Cinta_habilitada : Bool;   // ciclo activo y estación en condiciones iniciales
+      Orden_evacuar : Bool;   //  la aplicación ya terminó y el RFID está escrito
+      Sensor_palet_izq : Bool;   // Extremos de la cinta
+      Sensor_palet_dch : Bool;   // Extremos de la cinta
+      Sensor_ind_bien_pos : Bool;   // Palet apoyado en el stopper
+      Sensor_stopper_abajo : Bool;   // Confirmación del stopper
+   END_VAR
+
+   VAR_IN_OUT 
+      Cinta_dch : Bool;   // Actuadores
+      Bajar_stopper : Bool;   // Actuadores
+      Palet_en_posicion : Bool;   // Hay palet listo para trabajar
+      Palet_en_estacion : Bool;   // Sensor_palet_izq + Sensor_palet_dch + Sensor_ind_bien_pos, para Condicion_arranque_manual
+      Palet_evacuado : Bool;   //  activa Ciclo_manual_terminado
+   END_VAR
+
+   VAR 
+      Etapa_cinta : Int;   // nuemero de etapa
+      Etapa_2 : Bool;   // estamos en la 2
+      Timer_etapa2 {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;   // timer de la 2
+      Flanco_subida_sensor_palet_dch {InstructionName := 'R_TRIG'; LibVersion := '1.0'} : R_TRIG;   // flanco subida del sensor
+      Flanco_bajada_sensor_palet_dch {InstructionName := 'F_TRIG'; LibVersion := '1.0'} : F_TRIG;   // flanco bajada del sensor
+      Palets_en_cinta { S7_SetPoint := 'True'} : Int;
+      Flanco_subida_sensor_palet_izq {InstructionName := 'R_TRIG'; LibVersion := '1.0'} : R_TRIG;
+      Timer_Stopper_Etapa5 {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      Timer_avance {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+   END_VAR
+
+
+BEGIN
+	
+	#Cinta_dch := FALSE;
+	#Palet_en_posicion := FALSE;
+	#Palet_en_estacion := FALSE;
+	#Etapa_2 := FALSE;
+	#Palet_evacuado := FALSE;
+	
+	#Flanco_subida_sensor_palet_dch(CLK := #Sensor_palet_dch);
+	#Flanco_bajada_sensor_palet_dch(CLK := #Sensor_palet_dch);
+	#Flanco_subida_sensor_palet_izq(CLK := #Sensor_palet_izq);
+	#Timer_Stopper_Etapa5(IN := #Etapa_cinta = 5,
+	                      PT := T#400ms);
+	#Timer_avance(IN := #Etapa_cinta = 1 OR #Etapa_cinta = 6, PT := T#10s);
+	
+	
+	
+	IF #Etapa_cinta = 2 THEN
+	    #Etapa_2 := TRUE;
+	END_IF;
+	
+	#Timer_etapa2(IN := #Etapa_2,
+	              PT := T#300ms);
+	
+	IF #Flanco_subida_sensor_palet_izq.Q THEN
+	    #Palets_en_cinta := #Palets_en_cinta + 1;
+	END_IF;
+	IF #Flanco_bajada_sensor_palet_dch.Q AND #Palets_en_cinta > 0 THEN
+	    #Palets_en_cinta := #Palets_en_cinta - 1;
+	END_IF;
+	
+	IF #Sensor_ind_bien_pos AND #Palets_en_cinta = 0 THEN
+	    #Palets_en_cinta := 1;
+	END_IF;
+	
+	CASE #Etapa_cinta OF
+	    0:  // PARADA
+	        #Cinta_dch := FALSE;
+	        #Bajar_stopper := FALSE;
+	        IF #Cinta_habilitada AND (#Sensor_palet_izq OR #Palets_en_cinta > 0) AND NOT #Sensor_ind_bien_pos THEN
+	            #Etapa_cinta := 1;
+	        ELSIF #Cinta_habilitada AND #Sensor_ind_bien_pos THEN
+	            #Etapa_cinta := 3;
+	        END_IF;
+	    1:  //AVANCE
+	        #Cinta_dch := TRUE;
+	        IF #Sensor_ind_bien_pos THEN
+	            #Etapa_cinta := 3;
+	        ELSIF #Timer_avance.Q THEN   // no llega ningun palet: el contador estaba descuadrado
+	            #Palets_en_cinta := 0;
+	            #Etapa_cinta := 0;
+	        END_IF;
+	    2:  //ASENTAR
+	        #Cinta_dch := TRUE;
+	        IF #Timer_etapa2.Q THEN
+	            #Etapa_cinta := 3;
+	        END_IF;
+	    3:  //PALET EN POSICION
+	        #Palet_en_posicion := TRUE;
+	        IF #Orden_evacuar THEN
+	            #Etapa_cinta := 4;
+	        END_IF;
+	    4:  //LIBERAR
+	        #Bajar_stopper := TRUE;
+	        IF NOT #Sensor_stopper_abajo THEN
+	            #Etapa_cinta := 5;
+	        END_IF;
+	    5:  //SACAR
+	        #Bajar_stopper := TRUE;
+	        #Cinta_dch := TRUE;
+	        IF #Timer_Stopper_Etapa5.Q OR #Flanco_subida_sensor_palet_dch.Q THEN
+	            #Etapa_cinta := 6;
+	            ;
+	        END_IF;
+	    6: //SALIR
+	        #Bajar_stopper := FALSE;
+	        #Cinta_dch := TRUE;
+	        IF #Flanco_bajada_sensor_palet_dch.Q THEN
+	            #Etapa_cinta := 7;
+	            ;
+	        ELSIF #Timer_avance.Q THEN   // el palet no pasa por el sensor (retirado a mano): no dejar la cinta en marcha
+	            #Palets_en_cinta := 0;
+	            #Etapa_cinta := 7;
+	        END_IF;
+	    7: //TERMINAR
+	        #Palet_evacuado := TRUE;
+	        #Etapa_cinta := 0;
+	    ELSE  // Statement section ELSE
+	        #Etapa_cinta := 0;
+	        ;
+	END_CASE;
+	
+	#Palet_en_estacion := #Sensor_palet_dch OR #Sensor_palet_izq OR #Sensor_ind_bien_pos OR (#Palets_en_cinta > 0) OR #Etapa_cinta = 1;
+	
+	IF #Emergencia THEN
+	    #Etapa_cinta := 0;
+	    #Cinta_dch := FALSE;
+	    #Bajar_stopper := FALSE;
+	    #Palets_en_cinta := 0;   // el operario retira los palets en la emergencia
+	END_IF;
+	
+	
+END_FUNCTION_BLOCK
+

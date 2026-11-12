@@ -1,0 +1,10 @@
+\begin{tabularx}{\textwidth}{>{\bfseries}l p{3.1cm} c c X}
+\toprule
+Estación & Bytes que usa & \texttt{Mascara\_lectura} & \texttt{Mascara\_escritura} & Qué escribe \\
+\midrule
+Cámara & 0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 20 & \texttt{16\#00100F7F} & \texttt{16\#00000E7F} & bytes 0 a 6 (los 0 a 3 solo si el tag está vacío), 9, 10 y 11 \\
+BackCover & 3, 4, 12, 23 & \texttt{16\#00801018} & \texttt{16\#00001010} & byte 4 (bit 1) y byte 12 \\
+Press & 3, 4, 12, 13, 14, 15, 16 & \texttt{16\#0001F018} & \texttt{16\#00010010} & byte 4 (bit 2) y byte 16 \\
+Out & 5, 9, 17, 21, 22 & \texttt{16\#00620220} & \texttt{16\#0FFFFFFF} & los 28 bytes: deja el bloque a cero \\
+\bottomrule
+\end{tabularx}

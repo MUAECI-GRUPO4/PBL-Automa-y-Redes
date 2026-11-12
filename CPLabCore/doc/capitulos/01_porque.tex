@@ -1,0 +1,81 @@
+\chapter{Por qué existe \lib}\label{cap:porque}
+
+\section{Un mismo trabajo, repetido cuatro veces}
+La CP-Lab es una línea de montaje en miniatura. Un palet recorre las estaciones una detrás de otra, y cada estación hace su parte: la cámara inspecciona, BackCover coloca la tapa trasera, Press la prensa, Out clasifica y almacena. Cada estación tiene su propio PLC, su propio HMI y su propia aplicación.
+
+Pero cada estación, además de su aplicación, necesita resolver las mismas cosas que todas las demás:
+
+\begin{itemize}
+\item atender los botones de marcha, paro y rearme, el selector manual/automático y la seta de emergencia;
+\item mover la cinta, parar el palet en el stopper y dejarlo salir;
+\item leer el tag RFID del palet al llegar y escribirlo al terminar;
+\item decidir cuándo puede empezar su aplicación y cuándo ha terminado;
+\item reaccionar bien ante una emergencia o un fallo del lector.
+\end{itemize}
+
+Esto es lo que, hasta ahora, cada uno de nosotros iba a programar por su cuenta. Es mucho trabajo, es fácil equivocarse, y lo peor es que si cada uno lo resuelve a su manera, las estaciones dejan de entenderse entre sí.
+
+\section{Tres problemas concretos}
+\begin{description}[style=nextline,leftmargin=1.2cm]
+\item[Tiempo perdido.] La gestión de la botonera, la cinta y el RFID de la estación Out son unas 600 líneas de SCL que llevaron varias sesiones de pruebas con el simulador y la maqueta. Repetir ese camino en tres estaciones más es un desperdicio.
+\item[Errores repetidos.] Si hay un fallo en la gestión de la cinta (y los hay: se encontraron varios) y lo arreglamos en un proyecto, los otros tres siguen con el fallo hasta que alguien se acuerde.
+\item[Un palet que no se entiende.] El tag RFID es la \emph{memoria compartida} de la línea: lo que Cámara escribe lo lee Out. Si cada estación guarda sus datos en un byte distinto, o los lee y escribe de manera distinta, el palet llega a Out con datos que Out no sabe interpretar. El grupo ya acordó un mapa común de los bytes (el Excel \texttt{Mapa\_RFID\_CPLab}); falta que todos lo usen igual.
+\end{description}
+
+\section{La idea: una cocina común y cada uno su receta}
+\begin{idea}
+\lib\ es la \textbf{cocina} de la estación: los fogones, la nevera y el extractor, que son iguales en todos los restaurantes. Tu \textbf{aplicación} es la \textbf{receta}: lo único que cambia de una estación a otra. Con una cocina ya montada y probada, solo tienes que escribir tu receta.
+\end{idea}
+
+Más técnicamente, la librería hace tres cosas:
+\begin{enumerate}
+\item \textbf{Contiene todo lo común}: modos, emergencia, cinta, stopper, lector RFID y la secuencia «llega palet, leer, trabajar, escribir, dejar salir».
+\item \textbf{Define un contrato muy pequeño} con la aplicación de cada estación: ocho señales y un bloque de 28 bytes. La aplicación solo tiene que cumplir ese contrato.
+\item \textbf{Hace configurable lo que cambia de una estación a otra}: qué bytes del tag lee y escribe cada estación (con dos números, llamados \emph{máscaras}) y en qué dirección del tag está el bloque.
+\end{enumerate}
+
+\begin{center}
+\begin{tikzpicture}[x=1cm,y=1cm,node distance=0.7cm]
+\node[font=\sffamily\bfseries\color{rojo}] at (0,3.85) {Antes};
+\foreach \i/\n in {0/Cámara,1/BackCover,2/Press,3/Out}{
+  \node[caja,minimum width=2.9cm,minimum height=2.3cm,anchor=north west,fill=gris!8,draw=gris] (e\i) at (\i*3.6-5.3,3.4) {};
+  \node[font=\sffamily\small\bfseries,anchor=north] at (\i*3.6-3.85,3.3) {\n};
+  \node[caja,fill=rojo!10,draw=rojo!60,minimum width=2.5cm,font=\sffamily\scriptsize] at (\i*3.6-3.85,2.15) {gestión propia\\(cinta, RFID, modos…)};
+  \node[appcaja,minimum width=2.5cm,font=\sffamily\scriptsize,minimum height=0.6cm] at (\i*3.6-3.85,1.15) {su aplicación};}
+\node[font=\sffamily\bfseries\color{verde!60!black}] at (0,0.35) {Con \lib};
+\foreach \i/\n in {0/Cámara,1/BackCover,2/Press,3/Out}{
+  \node[appcaja,minimum width=2.9cm,font=\sffamily\small] (a\i) at (\i*3.6-3.85,-0.6) {\n};}
+\node[libcaja,minimum width=14.0cm,minimum height=1.0cm,font=\sffamily\small\bfseries] (L) at (0,-2.0) {\lib: modos, emergencia, cinta, RFID y secuencia del palet (una sola copia)};
+\foreach \i in {0,1,2,3} \draw[flecha,<->] (a\i.south) -- (L.north -| a\i.south);
+\end{tikzpicture}
+\captionof{figure}{Antes, cada estación llevaba su propia copia de la gestión. Con la librería, hay una sola, compartida.}
+\end{center}
+
+\section{Qué ganamos}
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.0cm}X}
+\toprule
+Ganancia & En la práctica \\
+\midrule
+Menos trabajo & Tu estación necesita solo su aplicación: del orden de unas 100--250 líneas, no 800. \\
+Menos errores & La gestión común está probada en simulación (48 comprobaciones) y se corrige una vez para todos. \\
+Estaciones que se entienden & Todos leen y escriben el tag RFID por el mismo mecanismo, con el mapa del grupo. \\
+Cambios fáciles & Una mejora de la cinta o del RFID se hace en la librería y llega a todos con una actualización. \\
+Se entiende lo que hay & El código es SCL abierto y comentado, y en este documento se explica cada bloque. \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{Qué \textbf{no} hace la librería}
+Conviene tener claro dónde acaba su responsabilidad, para no esperar de ella lo que no hace:
+\begin{itemize}
+\item \textbf{No es tu aplicación.} No sabe lo que hace la cámara, la prensa o la tapa trasera. Eso lo escribes tú.
+\item \textbf{No maneja el hardware de tu estación.} Las entradas y salidas propias de tu aplicación (el byte \cod{\%E0} / \cod{\%A0}), la cámara por PROFINET o el PLC Festo de otras estaciones siguen siendo cosa tuya.
+\item \textbf{No incluye HMI ni pantallas.}
+\item \textbf{No decide el contenido del tag.} Solo \emph{transporta} los bytes; qué significa cada byte lo fija el mapa del grupo (capítulo~\ref{cap:mapa}).
+\item \textbf{No es una caja negra.} Puedes abrir cualquier bloque y leerlo. Lo que no debes hacer es modificarlo en tu proyecto: si necesitas un cambio, se hace en la librería para todos (capítulo~\ref{cap:mantenimiento}).
+\end{itemize}
+
+\section{De dónde viene}
+La librería sale de la estación \textbf{Out}, que fue la primera en tener gestión completa: modos y emergencia, cinta con stopper, lector RFID real y una aplicación con su máquina de estados. Todo lo que no era propio de Out se separó, se hizo configurable y se probó. La parte de Out que se quedó fuera (el brazo con la garra y el eje Z) es su aplicación, y aparece en este documento solo como un ejemplo de aplicación completa.

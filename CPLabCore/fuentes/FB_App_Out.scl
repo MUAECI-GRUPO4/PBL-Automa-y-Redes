@@ -1,0 +1,263 @@
+FUNCTION_BLOCK "FB_App_Out"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Entradas_app : "UDT_Entradas_APP";
+      App_inicio : Bool;
+      Emergencia : Bool;
+      Rearme : Bool;
+   END_VAR
+
+   VAR_OUTPUT 
+      App_rearme_requerido : Bool;
+      App_en_reposo : Bool;
+      App_terminada : Bool;
+      App_alarma : Bool;
+      Inhibir_cinta : Bool;
+   END_VAR
+
+   VAR_IN_OUT 
+      Salidas_app : "UDT_Salidas_APP";
+      Imagen_palet : Array[0..27] of Byte;
+   END_VAR
+
+   VAR 
+      Cond_conf : Bool;
+      Cond_almacen : Bool;
+      Etapa_app : Int;
+      Etapa_previa : Int;
+      Posicion_objetivo : Int;
+      Almacen_destino : Int;
+      Start_enviado : Bool;
+      Pieza_en_garra : Bool;
+      Parpadeo : Bool;
+      Emergencia_previa : Bool;
+      Recuperando : Bool;
+      Timer_arranque {InstructionName := 'TON_TIME'; LibVersion := '1.0'; S7_SetPoint := 'False'} : TON_TIME;
+      Timer_conf {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      Timer_almacen {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      Timer_parpadeo {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      Timer_freno {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+   END_VAR
+
+   VAR_TEMP 
+      i : Int;
+   END_VAR
+
+   VAR CONSTANT 
+      IDX_CALIDAD : Int := 5;
+      IDX_DESTINO : Int := 17;
+   END_VAR
+
+
+BEGIN
+	#App_en_reposo := FALSE;
+	#App_terminada := FALSE;
+	#Cond_conf := FALSE;
+	#Cond_almacen := FALSE;
+	#Salidas_app.Bajar_cilindro := FALSE;
+	#Salidas_app.Subir_cilindro := FALSE;
+	#Salidas_app.Abrir_freno := FALSE;     // FALSE = freno puesto
+	#Salidas_app.Abrir_garra := FALSE;     // FALSE = garra cerrada
+	#Salidas_app.Iniciar_mov_driver_motor := FALSE;
+	#Salidas_app.Activar_driver_motor := NOT #Emergencia;
+	
+	CASE #Etapa_app OF
+	    0:  // REPOSO
+	        #App_en_reposo := #Entradas_app.Eje_z_arriba AND NOT #Entradas_app.Gripper_abierto
+	        AND #Entradas_app.Eje_referenciado AND NOT #Pieza_en_garra;
+	        IF #Pieza_en_garra AND #Entradas_app.Eje_z_arriba AND #Entradas_app.Eje_referenciado THEN
+	            #Almacen_destino := 1;          // tapa de una emergencia: al almacen de erroneas
+	            #Posicion_objetivo := 3;
+	            #Recuperando := TRUE;
+	            #Etapa_app := 7;
+	        ELSIF #App_inicio AND #App_en_reposo THEN
+	            IF #Imagen_palet[#IDX_DESTINO] = 1 OR #Imagen_palet[#IDX_DESTINO] = 2 THEN
+	                #Almacen_destino := BYTE_TO_INT(#Imagen_palet[#IDX_DESTINO]);   // forzado por receta: 1 izq, 2 dcha
+	            ELSIF #Imagen_palet[#IDX_CALIDAD] = 1 THEN
+	                #Almacen_destino := 2;   // calidad OK -> derecho
+	            ELSE
+	                #Almacen_destino := 1;   // NOK o sin evaluar -> izquierdo
+	            END_IF;
+	            #Posicion_objetivo := 3;        // 3 = centro
+	            #Etapa_app := 1;
+	        ELSIF NOT #App_en_reposo THEN
+	            #Etapa_app := 20;               // recolocar / referenciar
+	        END_IF;
+	        
+	    1, 7, 11:  // ORDEN DE MOVIMIENTO (flanco de START, MC cae = arranca)
+	        IF NOT #Start_enviado THEN
+	            #Start_enviado := #Entradas_app.Eje_z_arriba AND #Entradas_app.Ready AND #Entradas_app.Motion_complete;
+	        ELSE
+	            #Salidas_app.Iniciar_mov_driver_motor := #Entradas_app.Eje_z_arriba;
+	            IF NOT #Entradas_app.Motion_complete OR #Timer_arranque.Q THEN
+	                #Start_enviado := FALSE;
+	                #Etapa_app := #Etapa_app + 1;
+	            END_IF;
+	        END_IF;
+	        IF #Etapa_app = 11 OR #Etapa_app = 12 THEN
+	            #Salidas_app.Abrir_garra := TRUE;   // al volver, la garra sigue abierta
+	        END_IF;
+	        
+	    2, 8, 12, 22:  // ESPERAR FIN DE MOVIMIENTO (START a 0, MC sube = posicion alcanzada)
+	        IF #Etapa_app = 12 THEN
+	            #Salidas_app.Abrir_garra := TRUE;
+	        END_IF;
+	        IF #Entradas_app.Motion_complete THEN
+	            IF #Etapa_app = 8 AND #Posicion_objetivo = 3 THEN
+	                #Etapa_app := 9;
+	            ELSIF #Etapa_app = 8 THEN
+	                #Etapa_app := 10;
+	            ELSE
+	                #Etapa_app := #Etapa_app + 1;
+	            END_IF;
+	        END_IF;
+	        
+	    3:  // ABRIR GARRA
+	        #Salidas_app.Abrir_garra := TRUE;
+	        IF #Entradas_app.Gripper_abierto THEN
+	            #Etapa_app := 4;
+	        END_IF;
+	        
+	    4:  // BAJAR Z (primero se abre el freno, la bajada entra un ciclo despues)
+	        #Salidas_app.Abrir_garra := TRUE;
+	        #Salidas_app.Abrir_freno := TRUE;
+	        #Salidas_app.Bajar_cilindro := #Etapa_app = #Etapa_previa;
+	        #Cond_conf := #Entradas_app.Eje_z_abajo;
+	        IF #Timer_conf.Q THEN
+	            #Etapa_app := 5;
+	        END_IF;
+	        
+	    5:  // CERRAR GARRA
+	        #Salidas_app.Abrir_freno := TRUE;
+	        #Salidas_app.Bajar_cilindro := TRUE;
+	        #Cond_conf := NOT #Entradas_app.Gripper_abierto;
+	        IF #Timer_conf.Q THEN
+	            #Pieza_en_garra := TRUE;
+	            #Etapa_app := 6;
+	        END_IF;
+	        
+	    6:  // SUBIR Z
+	        #Salidas_app.Abrir_freno := TRUE;
+	        #Salidas_app.Subir_cilindro := TRUE;
+	        #Cond_conf := #Entradas_app.Eje_z_arriba;
+	        IF #Timer_conf.Q THEN
+	            #Etapa_app := 9;
+	        END_IF;
+	        
+	    9:  // ESPERAR ALMACEN LIBRE
+	        #Cond_almacen := (#Almacen_destino = 1 AND #Entradas_app.Almacen_izq_lleno)
+	        OR (#Almacen_destino = 2 AND #Entradas_app.Almacen_dch_lleno);
+	        IF NOT #Cond_almacen THEN
+	            #Posicion_objetivo := #Almacen_destino;
+	            #Etapa_app := 7;
+	        END_IF;
+	        
+	    10: // SOLTAR PIEZA
+	        #Salidas_app.Abrir_garra := TRUE;
+	        #Cond_conf := #Entradas_app.Gripper_abierto;
+	        IF #Timer_conf.Q THEN
+	            #Pieza_en_garra := FALSE;
+	            #Posicion_objetivo := 3;
+	            #Etapa_app := 11;
+	        END_IF;
+	        
+	    13: // CERRAR GARRA
+	        #Cond_conf := NOT #Entradas_app.Gripper_abierto;
+	        IF #Timer_conf.Q AND #Recuperando THEN
+	            #Recuperando := FALSE;
+	            #Etapa_app := 0;                // sin App_terminada: no habia ciclo de gestion
+	        ELSIF #Timer_conf.Q THEN
+	            #Etapa_app := 14;
+	        END_IF;
+	        
+	    14: // FIN
+	        FOR #i := 0 TO 27 DO
+	            #Imagen_palet[#i] := 0;   // la tabla pide dejar el palet limpio para la siguiente vuelta
+	        END_FOR;
+	        #App_terminada := TRUE;
+	        IF NOT #App_inicio THEN
+	            #Etapa_app := 0;
+	        END_IF;
+	        
+	    20: // RECOLOCAR: subir Z con garra cerrada (primero aire, luego freno; si Z ya esta arriba el freno no se abre)
+	        #Salidas_app.Abrir_freno := #Timer_freno.Q;
+	        #Salidas_app.Subir_cilindro := TRUE;
+	        #Cond_conf := #Entradas_app.Eje_z_arriba AND NOT #Entradas_app.Gripper_abierto;
+	        IF #Timer_conf.Q THEN
+	            IF #Entradas_app.Eje_referenciado THEN
+	                #Etapa_app := 0;
+	            ELSE
+	                #Posicion_objetivo := 0;    // 00 = referenciar
+	                #Etapa_app := 21;
+	            END_IF;
+	        END_IF;
+	        
+	    21: // REFERENCIAR: START con bits 00 sin esperar Ready/MC (Ready no sube hasta estar referenciado)
+	        #Salidas_app.Iniciar_mov_driver_motor := #Entradas_app.Eje_z_arriba AND #Etapa_app = #Etapa_previa;
+	        IF #Entradas_app.Eje_referenciado THEN
+	            #Etapa_app := 22;
+	        END_IF;
+	        
+	    23: // FIN REFERENCIADO
+	        #Etapa_app := 0;
+	        
+	    30: // ESPERA REARME (arranque y tras emergencia): nada se mueve
+	        IF (#Rearme OR #Emergencia_previa) AND NOT #Emergencia THEN
+	            #Etapa_app := 20;
+	        END_IF;
+	        
+	    ELSE
+	        #Etapa_app := 20;
+	END_CASE;
+	
+	//Bits de posicion del driver (Bit1 Bit0): 00 ref, 01 izq, 10 dch, 11 centro
+	#Salidas_app.Bit_pos_0 := (#Posicion_objetivo = 1) OR (#Posicion_objetivo = 3);
+	#Salidas_app.Bit_pos_1 := (#Posicion_objetivo = 2) OR (#Posicion_objetivo = 3);
+	
+	//Temporizadores (Timer_conf se resetea en cada cambio de etapa)
+	#Timer_arranque(IN := #Start_enviado,
+	                PT := T#500ms);
+	#Timer_conf(IN := #Cond_conf AND #Etapa_app = #Etapa_previa,
+	            PT := T#300ms);
+	#Timer_almacen(IN := #Cond_almacen,
+	               PT := T#10s);
+	#Timer_parpadeo(IN := #Timer_almacen.Q AND NOT #Timer_parpadeo.Q,
+	                PT := T#500ms);
+	#Timer_freno(IN := #Etapa_app = 20 AND #Etapa_previa = 20,
+	             PT := T#500ms);
+	IF #Timer_parpadeo.Q THEN
+	    #Parpadeo := NOT #Parpadeo;
+	END_IF;
+	#App_alarma := #Timer_almacen.Q AND #Parpadeo;
+	#Etapa_previa := #Etapa_app;
+	#Emergencia_previa := #Emergencia;
+	
+	//X no se mueve si Z no esta arriba
+	IF NOT #Entradas_app.Eje_z_arriba THEN
+	    #Salidas_app.Iniciar_mov_driver_motor := FALSE;
+	END_IF;
+	
+	//Emergencia
+	IF #Emergencia THEN
+	    IF #Entradas_app.Eje_z_abajo AND (#Etapa_app = 4 OR #Etapa_app = 5) THEN
+	        #Pieza_en_garra := TRUE;    // la garra se cierra al quitar la salida y atrapa la tapa
+	    END_IF;
+	    #Recuperando := FALSE;
+	    #Etapa_app := 30;
+	    #Start_enviado := FALSE;
+	    #Salidas_app.Bajar_cilindro := FALSE;
+	    #Salidas_app.Subir_cilindro := FALSE;
+	    #Salidas_app.Abrir_freno := FALSE;
+	    #Salidas_app.Abrir_garra := FALSE;
+	    #Salidas_app.Iniciar_mov_driver_motor := FALSE;
+	    #Salidas_app.Activar_driver_motor := FALSE;
+	    #Salidas_app.Bit_pos_0 := FALSE;
+	    #Salidas_app.Bit_pos_1 := FALSE;
+	END_IF;
+	
+	#Inhibir_cinta := NOT #Entradas_app.Eje_z_arriba; //la cinta no se mueve con Z abajo
+	#App_rearme_requerido := #Etapa_app = 30;
+	
+END_FUNCTION_BLOCK
+

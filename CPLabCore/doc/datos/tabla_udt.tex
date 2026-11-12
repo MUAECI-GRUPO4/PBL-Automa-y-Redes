@@ -1,0 +1,96 @@
+\subsection*{\texttt{UDT\_Entradas\_Basico}}
+Tag \texttt{Entradas\_Basico}, desde \texttt{\%I1.0}.\par\smallskip
+\begin{tabular}{>{\ttfamily\small}p{5.2cm}>{\ttfamily\small}p{4.2cm}>{\ttfamily\small}p{2.4cm}}
+\toprule
+\textnormal{\textbf{Miembro}} & \textnormal{\textbf{Tipo}} & \textnormal{\textbf{Dirección}} \\
+\midrule
+Boton\_marcha & Bool & \%I1.0 \\
+Boton\_paro & Bool & \%I1.1 \\
+Selector\_modo & Bool & \%I1.2 \\
+Boton\_rearme & Bool & \%I1.3 \\
+Sensor\_ind\_bien\_pos & Bool & \%I1.4 \\
+Seta\_emergencia & Bool & \%I1.5 \\
+Sensor\_palet\_izq & Bool & \%I1.6 \\
+Sensor\_palet\_dch & Bool & \%I1.7 \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\subsection*{\texttt{UDT\_Salidas\_Basico}}
+Tag \texttt{Salidas\_Basico}, desde \texttt{\%Q1.0}.\par\smallskip
+\begin{tabular}{>{\ttfamily\small}p{5.2cm}>{\ttfamily\small}p{4.2cm}>{\ttfamily\small}p{2.4cm}}
+\toprule
+\textnormal{\textbf{Miembro}} & \textnormal{\textbf{Tipo}} & \textnormal{\textbf{Dirección}} \\
+\midrule
+Led\_boton\_marcha & Bool & \%Q1.0 \\
+Led\_boton\_rearme & Bool & \%Q1.1 \\
+Led\_q1\_ciclo\_auto & Bool & \%Q1.2 \\
+Led\_q2\_emergencia & Bool & \%Q1.3 \\
+Cinta\_dch & Bool & \%Q1.4 \\
+Cinta\_izq & Bool & \%Q1.5 \\
+Cinta\_velocidad\_baja & Bool & \%Q1.6 \\
+Bajar\_stopper & Bool & \%Q1.7 \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\subsection*{\texttt{UDT\_Entradas\_Stopper}}
+Tag \texttt{Entradas\_Stopper}, desde \texttt{\%I42.0}.\par\smallskip
+\begin{tabular}{>{\ttfamily\small}p{5.2cm}>{\ttfamily\small}p{4.2cm}>{\ttfamily\small}p{2.4cm}}
+\toprule
+\textnormal{\textbf{Miembro}} & \textnormal{\textbf{Tipo}} & \textnormal{\textbf{Dirección}} \\
+\midrule
+Sensor\_ind\_0 & Bool & \%I42.0 \\
+Sensor\_ind\_1 & Bool & \%I42.1 \\
+Sensor\_ind\_2 & Bool & \%I42.2 \\
+Sensor\_ind\_3 & Bool & \%I42.3 \\
+Reservado\_E2\_4 & Bool & \%I42.4 \\
+Reservado\_E2\_5 & Bool & \%I42.5 \\
+Reservado\_E2\_6 & Bool & \%I42.6 \\
+Sensor\_stopper\_abajo & Bool & \%I42.7 \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\subsection*{\texttt{UDT\_Entradas\_RFID}}
+Tag \texttt{Entradas\_RFID}, desde \texttt{\%I10.0}.\par\smallskip
+\begin{tabular}{>{\ttfamily\small}p{5.2cm}>{\ttfamily\small}p{4.2cm}>{\ttfamily\small}p{2.4cm}}
+\toprule
+\textnormal{\textbf{Miembro}} & \textnormal{\textbf{Tipo}} & \textnormal{\textbf{Dirección}} \\
+\midrule
+Tag\_datos\_escritos & Bool & \%I10.0 \\
+Tag\_datos\_leidos & Bool & \%I10.1 \\
+Reservado\_E4\_2 & Bool & \%I10.2 \\
+Reservado\_E4\_3 & Bool & \%I10.3 \\
+Tag\_antena\_apagada & Bool & \%I10.4 \\
+Tag\_detectado & Bool & \%I10.5 \\
+Tag\_error & Bool & \%I10.6 \\
+Tag\_proceso\_listo & Bool & \%I10.7 \\
+Tag\_codigo\_error & Byte & \%IB11 \\
+Tag\_direccion\_confirmada & Word & \%IW12 \\
+Tag\_datos\_leidos\_escritos & Array[0..27] of Byte & \%I14.0 ... \%I41.7 \\
+\bottomrule
+\end{tabular}
+
+\medskip
+\subsection*{\texttt{UDT\_Salidas\_RFID}}
+Tag \texttt{Salidas\_RFID}, desde \texttt{\%Q10.0}.\par\smallskip
+\begin{tabular}{>{\ttfamily\small}p{5.2cm}>{\ttfamily\small}p{4.2cm}>{\ttfamily\small}p{2.4cm}}
+\toprule
+\textnormal{\textbf{Miembro}} & \textnormal{\textbf{Tipo}} & \textnormal{\textbf{Dirección}} \\
+\midrule
+Tag\_escribir & Bool & \%Q10.0 \\
+Tag\_leer & Bool & \%Q10.1 \\
+Tag\_reservado\_2 & Bool & \%Q10.2 \\
+Tag\_reservado\_3 & Bool & \%Q10.3 \\
+Tag\_antena\_apagar & Bool & \%Q10.4 \\
+Tag\_reservado\_5 & Bool & \%Q10.5 \\
+Tag\_reservado\_6 & Bool & \%Q10.6 \\
+Tag\_reservado\_7 & Bool & \%Q10.7 \\
+Reservado\_AB5 & Byte & \%QB11 \\
+Tag\_direccion\_leer\_escribir & Word & \%QW12 \\
+Tag\_datos\_a\_escribir & Array[0..27] of Byte & \%Q14.0 ... \%Q41.7 \\
+\bottomrule
+\end{tabular}
+
+\medskip

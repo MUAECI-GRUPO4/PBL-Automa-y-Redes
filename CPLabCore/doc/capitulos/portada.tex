@@ -1,0 +1,26 @@
+\begin{titlepage}
+\thispagestyle{empty}
+\centering
+\vspace*{1.2cm}
+{\sffamily\color{gris}\large Grupo 4 \,\textperiodcentered\, Automatización para Industrias de Proceso Continuo y Discreto}\\[1.4cm]
+{\sffamily\bfseries\fontsize{46}{50}\selectfont\color{azul}\lib}\\[0.5cm]
+{\sffamily\Large Librería de estación para la CP-Lab}\\[0.3cm]
+{\sffamily\large Guía de uso y de migración paso a paso}\\[1.6cm]
+
+\begin{tikzpicture}[x=1cm,y=1cm]
+  % tres capas apiladas: tu aplicacion, contrato, libreria
+  \node[appcaja,minimum width=9.4cm,minimum height=1.25cm,font=\sffamily\normalsize] (app) at (0,2.5) {\textbf{Tu aplicación}\\[-1pt]\footnotesize lo único propio de tu estación};
+  \node[libcaja,minimum width=9.4cm,minimum height=2.4cm,font=\sffamily\normalsize] (lib) at (0,0) {};
+  \node[font=\sffamily\bfseries\normalsize,color=azul] at (0,0.78) {\lib};
+  \foreach \x/\t in {-3.45/Estación,-1.15/Modo,1.15/Cinta,3.45/RFID}
+    \node[caja,fill=white,minimum width=2.0cm,minimum height=0.8cm,font=\sffamily\footnotesize] at (\x,-0.35) {\t};
+  \node[hwcaja,minimum width=9.4cm,minimum height=0.8cm,font=\sffamily\small] (hw) at (0,-2.2) {Entradas y salidas de la maqueta};
+  \draw[flecha,<->] (0,1.87) -- (0,1.2);
+  \draw[flecha,<->] (0,-1.2) -- (0,-1.8);
+\end{tikzpicture}
+
+\vfill
+{\sffamily\large Versión de la librería \vlib\\[2pt]\small 12 de noviembre de 2026}\\[0.8cm]
+{\sffamily\small\color{gris} Para cualquier miembro del grupo: no hace falta haber programado la estación Out\\para entender, instalar y usar la librería.}
+\vspace{0.6cm}
+\end{titlepage}

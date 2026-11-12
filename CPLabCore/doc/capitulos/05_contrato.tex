@@ -1,0 +1,140 @@
+\chapter{El contrato con tu aplicación}\label{cap:contrato}
+
+Este es el capítulo más importante para quien tenga que escribir o adaptar una aplicación. El contrato es pequeño a propósito: ocho señales y una imagen. Si tu aplicación lo cumple, funciona con la librería; si no, la estación se queda esperando.
+
+\section{Las señales}
+Se miran siempre desde \textbf{tu aplicación}. Tienes cuatro cosas que \emph{recibes} y cinco que \emph{entregas}:
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\ttfamily\small}p{3.7cm}>{\raggedright\arraybackslash}p{1.3cm}p{1.1cm}X}
+\toprule
+\textnormal{\textbf{Señal}} & \textbf{Sentido} & \textbf{Tipo} & \textbf{Qué significa} \\
+\midrule
+App\_inicio & recibes & Bool & «Empieza»: hay un palet en posición y su tag ya está leído en la imagen. Se mantiene activa hasta que entregues \cod{App\_terminada}. \\
+Emergencia & recibes & Bool & Hay emergencia. Detén tus actuadores y vuelve a reposo. \\
+Rearme & recibes & Bool & Pulso: se ha pulsado el botón de rearme. \\
+Imagen\_palet & recibes y devuelves & Array[0..27] of Byte & Los datos del palet. Lees de aquí y escribes aquí (sección~\ref{sec:imagen}). \\
+\midrule
+App\_en\_reposo & entregas & Bool & «Estoy lista para recibir un palet.» Sin ella, la estación no arranca. \\
+App\_terminada & entregas & Bool & «He acabado con este palet y he dejado el resultado en la imagen.» \\
+App\_alarma & entregas & Bool & Opcional. Hace parpadear la luz Q2. Para avisar de un problema de tu aplicación. \\
+App\_rearme\_requerido & entregas & Bool & Opcional. Enciende la luz del botón de rearme: «necesito que alguien pulse rearme». \\
+Inhibir\_cinta & entregas & Bool & Si la activas, la cinta no se mueve. Úsala cuando tu mecanismo estorbe (p.\,ej., la garra de Out con el eje Z abajo). \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\section{La conversación, en el tiempo}
+La figura~\ref{fig:cronograma-contrato} muestra una conversación normal entre la librería (arriba) y tu aplicación (abajo). Léela de izquierda a derecha.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\def\h{0.55}
+% ejes
+\foreach \i/\n/\c in {0/{\cod{Palet\_en\_posicion}}/azul,1/{\cod{Orden\_leer} / \cod{Rfid\_lectura\_ok}}/azul,2/{\cod{App\_en\_reposo}}/naranja,3/{\cod{App\_inicio}}/azul,4/{\cod{App\_terminada}}/naranja,5/{\cod{Orden\_escribir}}/azul,6/{\cod{Orden\_evacuar}}/azul}{
+  \node[font=\sffamily\scriptsize,anchor=east] at (-0.2,-\i*1.0+0.28) {\n};
+  \draw[gris!50] (0,-\i*1.0) -- (12.4,-\i*1.0);}
+% palet en posicion: sube en 1, baja en 9.6
+\draw[azul,very thick] (0,0) -- (1,0) -- (1,\h) -- (9.4,\h) -- (9.4,0) -- (12.4,0);
+% leer
+\draw[azul,very thick] (0,-1) -- (1.2,-1) -- (1.2,-1+\h) -- (2.6,-1+\h) -- (2.6,-1) -- (12.4,-1);
+% reposo (app)
+\draw[naranja,very thick] (0,-2+\h) -- (2.9,-2+\h) -- (2.9,-2) -- (7.2,-2) -- (7.2,-2+\h) -- (12.4,-2+\h);
+% inicio
+\draw[azul,very thick] (0,-3) -- (2.9,-3) -- (2.9,-3+\h) -- (7.0,-3+\h) -- (7.0,-3) -- (12.4,-3);
+% terminada
+\draw[naranja,very thick] (0,-4) -- (6.5,-4) -- (6.5,-4+\h) -- (7.2,-4+\h) -- (7.2,-4) -- (12.4,-4);
+% escribir
+\draw[azul,very thick] (0,-5) -- (7.0,-5) -- (7.0,-5+\h) -- (8.6,-5+\h) -- (8.6,-5) -- (12.4,-5);
+% evacuar
+\draw[azul,very thick] (0,-6) -- (8.7,-6) -- (8.7,-6+\h) -- (9.4,-6+\h) -- (9.4,-6) -- (12.4,-6);
+% marcas
+\draw[dashed,gris] (2.9,0.8) -- (2.9,-6.3);
+\draw[dashed,gris] (7.0,0.8) -- (7.0,-6.3);
+\node[etiqueta,font=\sffamily\scriptsize\bfseries] at (2.9,0.95) {1};
+\node[etiqueta,font=\sffamily\scriptsize\bfseries] at (7.0,0.95) {2};
+\node[etiqueta,font=\sffamily\scriptsize,align=left,anchor=north west] at (0,-6.55) {\textbf{1} La librería ha leído el tag y sube \cod{App\_inicio}; tu aplicación deja de estar en reposo.\\\textbf{2} Tu aplicación acaba y sube \cod{App\_terminada}; la librería baja \cod{App\_inicio} y empieza a escribir el tag. Solo entonces tu aplicación baja \cod{App\_terminada} y vuelve a reposo.};
+\end{tikzpicture}
+\caption{Una conversación normal entre la librería (azul) y tu aplicación (naranja). Las líneas altas son «verdadero».}
+\label{fig:cronograma-contrato}
+\end{figure}
+
+\section{Las reglas del contrato}\label{sec:reglas}
+Son siete. Si las cumples, tu aplicación funciona con la librería.
+
+\begin{enumerate}[leftmargin=1.2cm,label=\textbf{R\arabic*.}]
+\item \textbf{Declara cuándo estás en reposo.} \cod{App\_en\_reposo} debe ser verdadera cuando tu mecanismo está en su posición inicial y puede recibir un palet. Es la forma de impedir que la estación arranque con tu mecanismo a medias.
+\item \textbf{Empieza solo con \cod{App\_inicio}, y solo si estás en reposo.} Mientras trabajas, \cod{App\_en\_reposo} debe ser falsa.
+\item \textbf{Termina con \cod{App\_terminada} y mantenla.} Debe seguir verdadera \emph{hasta que \cod{App\_inicio} baje}. Es la forma que se ha probado y no depende de nada más. Un pulso de un solo ciclo puede funcionar con el orden de llamadas recomendado, pero es frágil: si alguna vez cambia el orden de las llamadas en \cod{Main}, tu aplicación podría volver a reposo viendo \cod{App\_inicio} todavía activa y empezar otra vez con el mismo palet.
+\item \textbf{Deja el resultado en la imagen antes de terminar.} Todo lo que quieras escribir en el tag tiene que estar ya en \cod{Imagen\_palet} cuando subas \cod{App\_terminada}. La librería escribe el tag justo después.
+\item \textbf{Toca solo tus bytes.} Escribe en \cod{Imagen\_palet} solo los bytes que están en tu \cod{Mascara\_escritura}, y lee solo los que están en tu \cod{Mascara\_lectura}. Lo demás es de otras estaciones (capítulo~\ref{cap:mapa}).
+\item \textbf{Obedece la emergencia.} Con \cod{Emergencia} verdadera, apaga todos tus actuadores peligrosos y vuelve a tu estado inicial. Tu aplicación puede quedar fuera de reposo (por ejemplo, con una pieza en la garra); en ese caso mantén \cod{App\_en\_reposo} falsa hasta haberte recolocado, y si lo necesitas pide el rearme con \cod{App\_rearme\_requerido}.
+\item \textbf{No esperes cosas que la librería no hace.} No hay límite de tiempo para tu aplicación: si nunca subes \cod{App\_terminada}, la estación esperará para siempre. Si tu mecanismo puede atascarse, pon tu propio temporizador y reacciona con \cod{App\_alarma}.
+\end{enumerate}
+
+\begin{ojo}
+La regla R3 es la que más se pasa por alto, porque una aplicación que sube \cod{App\_terminada} un instante parece funcionar. Haz lo que hace la plantilla: pasar a una etapa «fin» y no salir de ella hasta que \cod{App\_inicio} baje.
+\end{ojo}
+
+\section{La imagen del palet}\label{sec:imagen}
+\cod{Imagen\_palet} es un array de 28 bytes, índices de 0 a 27, que corresponden a los bytes 0 a 27 del bloque del tag. Es muy cómodo usarla con constantes con nombre:
+
+\begin{lstlisting}[caption={Cómo se usa la imagen en una aplicación (extracto de la plantilla).}]
+VAR CONSTANT
+    IDX_CALIDAD  : Int  := 5;     // byte 5 del bloque: calidad global
+    IDX_COMPLETADAS : Int := 4;   // byte 4: estaciones completadas
+    BIT_PRESS    : Byte := 16#04; // bit 2: Press
+END_VAR
+
+// leer:
+IF #Imagen_palet[#IDX_CALIDAD] = 1 THEN ... END_IF;
+// escribir, sin tocar los demas bits del byte:
+#Imagen_palet[#IDX_COMPLETADAS] := #Imagen_palet[#IDX_COMPLETADAS] OR #BIT_PRESS;
+\end{lstlisting}
+
+Dos observaciones importantes:
+\begin{itemize}
+\item Los bytes que no estén en \cod{Mascara\_lectura} te llegan \textbf{a cero}, aunque en el tag haya otra cosa. Esto es una protección: tu aplicación no depende de bytes que no son suyos.
+\item Un byte tuyo para escribir tiene que estar \textbf{también en \cod{Mascara\_lectura}}, salvo que quieras sobrescribirlo siempre con un valor fijo. Si no, la imagen lo tiene a cero y escribirías cero encima del valor del tag. Este es el error más frecuente con las máscaras; el capítulo~\ref{cap:mapa} da la regla exacta.
+\end{itemize}
+
+\section{El orden de las llamadas en \texttt{Main}}
+En \cod{Main}, primero va \cod{Est\_FB\_Estacion} y después tu aplicación. Las señales que van de la librería a tu aplicación (\cod{App\_inicio}, \cod{Emergencia}, \cod{Rearme}) llegan en el \textbf{mismo} ciclo de scan. Las que vuelven (\cod{App\_en\_reposo}, \cod{App\_terminada}, \dots) llegan a la librería un ciclo después, lo que no importa porque son niveles que se mantienen. \cod{Rearme} es la única que dura un solo ciclo, y tu aplicación la recibe en ese ciclo.
+
+\section{Tu aplicación en una página: la plantilla}
+La copia maestra \cod{Est\_FB\_App\_Plantilla} (listado completo en el apéndice~\ref{ap:listados}) es el esqueleto que debes copiar. Su máquina de estados es esta:
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[x=1cm,y=1cm]
+\node[estado,fill=naranja!10,draw=naranja] (a0) at (0,0) {0\\reposo};
+\node[estado,fill=naranja!10,draw=naranja] (a1) at (4.2,0) {10\\trabajo};
+\node[estado,fill=naranja!10,draw=naranja] (a2) at (8.4,0) {20\\fin};
+\draw[flecha] (a0) -- node[etiqueta,above] {\cod{App\_inicio} y en reposo} (a1);
+\draw[flecha] (a1) -- node[etiqueta,above] {tu secuencia termina} (a2);
+\draw[flecha,rounded corners=3pt] (a2.south) -- ++(0,-1.0) -| node[etiqueta,pos=0.25,below] {\cod{App\_inicio} baja} (a0.south);
+\node[etiqueta,align=left,font=\sffamily\scriptsize,anchor=north west] at (-0.6,-2.2) {En reposo: \cod{App\_en\_reposo} verdadera.\ \ En fin: \cod{App\_terminada} verdadera.\\Con \cod{Emergencia}: vuelve a 0 y apaga tus actuadores.};
+\end{tikzpicture}
+\caption{La plantilla de aplicación: tres estados. Tu secuencia real se escribe dentro de «trabajo», que puedes ampliar con todas las etapas que necesites.}
+\end{figure}
+
+Para adaptarla solo tienes que:
+\begin{enumerate}
+\item sustituir el contenido del estado 10 por la secuencia de tu estación (puede tener tantas etapas como quieras, mientras acabe pasando al estado de fin);
+\item cambiar la condición de \cod{App\_en\_reposo} en el estado 0 por la tuya;
+\item añadir tus entradas y salidas físicas al bloque, y cablearlas en \cod{Main};
+\item declarar tus constantes \cod{IDX\_*} y usar la imagen.
+\end{enumerate}
+El capítulo~\ref{cap:migracion} lo hace paso a paso, con ejemplos completos para Press, BackCover y Cámara.
+
+\section{Cómo comprobar que tu aplicación cumple el contrato}
+Antes de probar con la estación completa, merece la pena comprobar estas cinco cosas, que se ven directamente en el \emph{observar y modificar} de TIA (o en la tabla de observación):
+\begin{enumerate}
+\item Con la estación parada, \cod{App\_en\_reposo} está en verdadero.
+\item Al forzar \cod{App\_inicio} a verdadero, \cod{App\_en\_reposo} baja y tu mecanismo empieza.
+\item Al acabar, \cod{App\_terminada} sube, y \textbf{se queda} mientras \cod{App\_inicio} esté activa.
+\item Al bajar \cod{App\_inicio}, \cod{App\_terminada} baja y \cod{App\_en\_reposo} vuelve a subir.
+\item Al activar \cod{Emergencia} en cualquier momento, tus actuadores se apagan y la aplicación vuelve a reposo (o declara que necesita rearme).
+\end{enumerate}

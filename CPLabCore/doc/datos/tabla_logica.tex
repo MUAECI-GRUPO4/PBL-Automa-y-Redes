@@ -1,0 +1,1974 @@
+\begin{tabularx}{\textwidth}{>{\bfseries}l p{2.6cm} p{3.6cm} X}
+\toprule
+Estación & Lee (bytes) & Escribe (bytes) & Secuencia resumida \\
+\midrule
+Cámara & 0, 3, 8, 20 & 0–4 si el tag está vacío; 4 (bit0), 5, 6, 9, 10, 11 & Si el byte 0 no es 16\#A5, inicializar el bloque con valores por defecto. Leer el job (byte 8); si es 0, deducirlo de los fusibles (byte 20) o usar el job por defecto. Switch-to-run $\rightarrow$ Change Job $\rightarrow$ Trigger. Esperar xReady y leer RDBU. LED verde si OK, rojo parpadeante si NOK. Escribir resultado, calidad e ImageID. \\
+\midrule
+BackCover & 3, 23 & 4 (bit1), 12 & Comprobar que está requerida (byte 3 bit1), que hay tapa frontal (sensor; byte 23 si se acuerda) y que no hay trasera. Colocar la tapa. Si el almacén está vacío, poner el bit2 del byte 12. \\
+\midrule
+Press & 3, 12, 13, 14–15 & 4 (bit2), 16 & Comprobar que hay tapa trasera (byte 12 bit1 y sensor). Leer n\textordmasculine{} de golpes y tiempo (0 $\rightarrow$ valores por defecto). Subir, bajar hasta presión inferior, mantener, subir. Repetir n veces. Escribir golpes realizados. \\
+\midrule
+Out & 5, 9, 17, 21, 22 & 4 (bit3), 18; al final todo el bloque a 0 & Destino = byte 17; si es 0: calidad OK$\rightarrow$almacén izquierdo, NOK$\rightarrow$derecho (en CIROS: 2 vs 4 taladros, byte 22). Mover X solo con Z arriba. Tras depositar, escribir byte 18 y poner a cero el bloque. \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+ &  &  &  \\
+\midrule
+\bottomrule
+\end{tabularx}

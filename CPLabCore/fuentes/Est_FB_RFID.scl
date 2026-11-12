@@ -1,0 +1,183 @@
+FUNCTION_BLOCK "Est_FB_RFID"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      Emergencia : Bool;
+      Orden_escribir : Bool;
+      Orden_leer : Bool;
+      Tag_datos_escritos : Bool;
+      Tag_datos_leidos : Bool;
+      Tag_antena_apagada : Bool;
+      Tag_detectado : Bool;
+      Tag_error : Bool;
+      Tag_proceso_listo : Bool;
+      Tag_codigo_error : Byte;
+      Tag_direccion_confirmada : Word;
+      Tag_datos_leidos_escritos : Array[0..27] of Byte;
+      Direccion_lectura : Word;
+      Direccion_escritura : Word;
+      Mascara_lectura : DWord;
+      Mascara_escritura : DWord;
+   END_VAR
+
+   VAR_IN_OUT 
+      Tag_escribir : Bool;
+      Tag_leer : Bool;
+      Tag_antena_apagar : Bool;
+      Tag_direccion_leer_escribir : Word;
+      Tag_datos_a_escribir : Array[0..27] of Byte;
+      Rfid_lectura_ok : Bool;
+      Rfid_escritura_ok : Bool;
+      Rfid_error : Bool;
+      Rfid_codigo_error : Byte;
+      Imagen : Array[0..27] of Byte;
+   END_VAR
+
+   VAR 
+      T_Rfid {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+      Etapa_rfid { S7_SetPoint := 'True'} : Int;
+      Etapa_1 : Bool;
+      Etapa_3 : Bool;
+      Etapa_4 : Bool;
+      Rfid_ocupado : Bool;
+      Imagen_leida : Array[0..27] of Byte;
+   END_VAR
+
+   VAR_TEMP 
+      i : Int;
+   END_VAR
+
+
+BEGIN
+	//PARA EL DANI DEL FUTURO
+	//que vaya leyendo los codigos rfid por si me vienen dos palets juntos
+	//y que los meta en una cola para luego leerlos y escribirlos por orden?
+	//      - no lo voy a hacer porque creo que esto solo es un problema en el simulador
+	//      - pero gracias por la idea dani del pasado
+	//---------------------------------------------------------------------------
+	#Tag_escribir := FALSE;
+	#Tag_leer := FALSE;
+	#Tag_antena_apagar := TRUE;
+	#Rfid_lectura_ok := FALSE;
+	#Rfid_escritura_ok := FALSE;
+	#Rfid_error := FALSE;
+	#Etapa_1 := FALSE;
+	#Etapa_3 := FALSE;
+	#Etapa_4 := FALSE;
+	
+	CASE #Etapa_rfid OF
+	    0:  // REPOSO
+	        #Tag_antena_apagar := TRUE;
+	        #Tag_leer := FALSE;
+	        #Tag_escribir := FALSE;
+	        IF (#Orden_leer OR #Orden_escribir) AND NOT #Emergencia THEN
+	            #Etapa_rfid := 1;
+	            ;
+	        END_IF;
+	    1:  // ENERGIZAR
+	        #Tag_antena_apagar := FALSE;
+	        #Etapa_1 := TRUE;
+	        IF #Tag_error OR #T_Rfid.Q THEN
+	            #Etapa_rfid := 8;
+	        ELSIF NOT #Tag_antena_apagada AND #Tag_detectado AND #Tag_proceso_listo AND NOT #Tag_error THEN
+	            #Etapa_rfid := 2;
+	        END_IF;
+	        ;
+	    2:  // LISTO
+	        #Tag_antena_apagar := FALSE;
+	        #Rfid_ocupado := FALSE;
+	        IF #Orden_leer AND NOT #Orden_escribir THEN
+	            #Etapa_rfid := 3;
+	        ELSIF NOT #Orden_leer AND #Orden_escribir THEN
+	            #Etapa_rfid := 4;
+	        END_IF;
+	        ;
+	    3:  // LEER
+	        #Tag_antena_apagar := FALSE;
+	        #Etapa_3 := TRUE;
+	        // "leido" es el eco de la orden: el dato solo vale cuando "listo" baja y vuelve a subir
+	        IF NOT #Tag_proceso_listo THEN
+	            #Rfid_ocupado := TRUE;
+	        END_IF;
+	        #Tag_leer := TRUE;
+	        #Tag_direccion_leer_escribir := #Direccion_lectura;
+	        IF #Tag_error OR #T_Rfid.Q THEN
+	            #Etapa_rfid := 8;
+	        ELSIF #Rfid_ocupado AND #Tag_datos_leidos AND #Tag_proceso_listo AND #Tag_direccion_confirmada = #Direccion_lectura THEN
+	            #Imagen_leida := #Tag_datos_leidos_escritos;   // copia completa se usa al escribir
+	            FOR #i := 0 TO 27 DO
+	                IF (SHR(IN := #Mascara_lectura, N := #i) AND 16#1) <> 16#0 THEN
+	                    #Imagen[#i] := #Tag_datos_leidos_escritos[#i];
+	                ELSE
+	                    #Imagen[#i] := 0;   // lo que no es de esta estacion no pasa a la app
+	                END_IF;
+	            END_FOR;
+	            #Etapa_rfid := 5;
+	        END_IF;
+	        ;
+	    4:  // ESCRIBIR
+	        #Tag_antena_apagar := FALSE;
+	        #Etapa_4 := TRUE;
+	        IF NOT #Tag_proceso_listo THEN
+	            #Rfid_ocupado := TRUE;
+	        END_IF;
+	        #Tag_escribir := TRUE;
+	        #Tag_direccion_leer_escribir := #Direccion_escritura;
+	        FOR #i := 0 TO 27 DO
+	            IF (SHR(IN := #Mascara_escritura, N := #i) AND 16#1) <> 16#0 THEN
+	                #Tag_datos_a_escribir[#i] := #Imagen[#i];       // byte de esta estacion
+	            ELSE
+	                #Tag_datos_a_escribir[#i] := #Imagen_leida[#i]; // byte ajeno: se devuelve como estaba
+	            END_IF;
+	        END_FOR;
+	        IF #Tag_error OR #T_Rfid.Q THEN
+	            #Etapa_rfid := 8;
+	        ELSIF #Rfid_ocupado AND #Tag_datos_escritos AND #Tag_proceso_listo AND #Tag_direccion_confirmada = #Direccion_escritura THEN
+	            #Etapa_rfid := 6;
+	        END_IF;
+	        ;
+	    5:  // LEIDO
+	        #Tag_antena_apagar := FALSE;
+	        #Rfid_lectura_ok := TRUE;
+	        IF NOT #Orden_leer THEN
+	            #Etapa_rfid := 0;
+	        END_IF;
+	        ;
+	    6:  // ESCRITO 
+	        #Tag_antena_apagar := FALSE;
+	        #Rfid_escritura_ok := TRUE;
+	        IF NOT #Orden_escribir THEN
+	            #Etapa_rfid := 0;
+	        END_IF;
+	        ;
+	    8:  // ERROR RFID
+	        #Rfid_error := TRUE;
+	        #Rfid_codigo_error := #Tag_codigo_error;
+	        #Tag_antena_apagar := TRUE;
+	        #Tag_leer := FALSE;
+	        #Tag_escribir := FALSE;
+	        IF NOT #Orden_escribir AND NOT #Orden_leer THEN   // CIROS no da "antena apagada" (iAntenaOFF sin conectar)
+	            #Etapa_rfid := 0;
+	        END_IF;
+	        ;
+	    ELSE  // Statement section ELSE
+	        #Etapa_rfid := 0;
+	        ;
+	END_CASE;
+	
+	#T_Rfid(IN := #Etapa_1 OR #Etapa_3 OR #Etapa_4,
+	        PT := T#5s);
+	
+	IF #Emergencia THEN
+	    #Etapa_rfid := 0;
+	    #Tag_antena_apagar := TRUE;
+	    #Tag_escribir := FALSE;
+	    #Tag_leer := FALSE;
+	    #Rfid_lectura_ok := FALSE;
+	    #Rfid_escritura_ok := FALSE;
+	    #Rfid_error := FALSE;
+	END_IF;
+	
+	
+END_FUNCTION_BLOCK
+

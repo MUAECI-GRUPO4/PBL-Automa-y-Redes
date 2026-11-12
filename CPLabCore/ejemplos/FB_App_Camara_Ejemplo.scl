@@ -1,0 +1,140 @@
+FUNCTION_BLOCK "FB_App_Camara_Ejemplo"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT
+      // --- contrato con la libreria ---
+      App_inicio : Bool;
+      Emergencia : Bool;
+      // --- senales fisicas de la camara: cablealas a tus tags en Main (nombres de ejemplo) ---
+      Camara_lista : Bool;             // xReady: la camara ha terminado el trabajo pedido
+      Camara_resultado_ok : Bool;      // la inspeccion ha dado OK (RDBU)
+      Camara_orientacion_ok : Bool;    // el palet esta bien orientado
+      Camara_id_imagen : Byte;         // ImageID de la ultima imagen
+   END_VAR
+
+   VAR_OUTPUT
+      // --- contrato con la libreria ---
+      App_en_reposo : Bool;
+      App_terminada : Bool;
+      App_alarma : Bool;
+      App_rearme_requerido : Bool;
+      Inhibir_cinta : Bool;
+      // --- mando de la camara ---
+      Camara_disparar : Bool;          // Trigger: pide una inspeccion
+      Camara_job : Byte;               // job a cargar (Change Job)
+   END_VAR
+
+   VAR_IN_OUT
+      Imagen_palet : Array[0..27] of Byte;
+   END_VAR
+
+   VAR
+      Etapa_app : Int;
+      T_camara {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+   END_VAR
+
+   VAR CONSTANT
+      // Bytes del tag que usa Camara (ver Mapa_RFID_CPLab.xlsx)
+      IDX_MARCA_BLOQUE : Int := 0;
+      IDX_ID_PALET : Int := 1;
+      IDX_RECETA : Int := 2;
+      IDX_ESTACIONES_A_REALIZAR : Int := 3;
+      IDX_ESTACIONES_COMPLETADAS : Int := 4;
+      IDX_CALIDAD : Int := 5;
+      IDX_RECHAZO : Int := 6;
+      IDX_JOB : Int := 8;
+      IDX_RESULTADO : Int := 9;
+      IDX_IMAGE_ID : Int := 10;
+      IDX_INTENTOS : Int := 11;
+      IDX_FUSIBLES : Int := 20;        // reservado, lo escribe RASS (otro grupo)
+      MARCA_VALIDO : Byte := 16#A5;
+      BIT_CAMARA : Byte := 16#01;      // bit 0 de las mascaras de estacion
+      JOB_POR_DEFECTO : Byte := 4;     // ajusta al job que quiera tu grupo cuando no hay datos
+      MOTIVO_NOK : Byte := 16#11;      // nibble alto 1 = Camara, nibble bajo 1 = inspeccion NOK
+   END_VAR
+
+
+BEGIN
+	#App_en_reposo := FALSE;
+	#App_terminada := FALSE;
+	#App_alarma := FALSE;
+	#Inhibir_cinta := FALSE;
+	#Camara_disparar := FALSE;
+
+	CASE #Etapa_app OF
+	    0:  // REPOSO
+	        #App_en_reposo := TRUE;       // TODO: anade aqui la condicion de reposo de tu camara
+	        IF #App_inicio AND #App_en_reposo THEN
+	            // tag vacio (sin 16#A5 en el byte 0): se inicializan los bytes 0..4 con los valores por defecto
+	            IF #Imagen_palet[#IDX_MARCA_BLOQUE] <> #MARCA_VALIDO THEN
+	                #Imagen_palet[#IDX_MARCA_BLOQUE] := #MARCA_VALIDO;
+	                #Imagen_palet[#IDX_ID_PALET] := 0;
+	                #Imagen_palet[#IDX_RECETA] := 0;
+	                #Imagen_palet[#IDX_ESTACIONES_A_REALIZAR] := 0;
+	                #Imagen_palet[#IDX_ESTACIONES_COMPLETADAS] := 0;
+	            END_IF;
+	            IF #Imagen_palet[#IDX_ESTACIONES_A_REALIZAR] = 0
+	               OR (#Imagen_palet[#IDX_ESTACIONES_A_REALIZAR] AND #BIT_CAMARA) <> 0 THEN
+	                // job: el del tag; si es 0, se deduce de los fusibles (byte 20); sin dato, el de por defecto
+	                IF #Imagen_palet[#IDX_JOB] <> 0 THEN
+	                    #Camara_job := #Imagen_palet[#IDX_JOB];
+	                ELSIF #Imagen_palet[#IDX_FUSIBLES] = 0 THEN
+	                    #Camara_job := #JOB_POR_DEFECTO;
+	                ELSE
+	                    #Camara_job := INT_TO_BYTE(BYTE_TO_INT(#Imagen_palet[#IDX_FUSIBLES] AND 16#03) + 1);
+	                    // fusibles: 1 = izq -> job 2, 2 = dcha -> job 3, 3 = ambos -> job 4
+	                END_IF;
+	                #Etapa_app := 10;
+	            ELSE
+	                #Etapa_app := 40;         // esta estacion no se pide: el palet pasa sin tocar nada
+	            END_IF;
+	        END_IF;
+
+	    10: // INSPECCIONAR: job cargado y disparo; espera a Camara_lista
+	        #Camara_disparar := TRUE;
+	        IF #Camara_lista THEN
+	            #Etapa_app := 20;
+	        ELSIF #T_camara.Q THEN
+	            #App_alarma := TRUE;          // la camara no responde
+	            #Etapa_app := 30;
+	        END_IF;
+
+	    20: // RESULTADO OK / NOK: se escribe en el tag
+	        #Imagen_palet[#IDX_RESULTADO] := 16#01;                       // bit 0: inspeccionado
+	        IF #Camara_resultado_ok THEN
+	            #Imagen_palet[#IDX_RESULTADO] := #Imagen_palet[#IDX_RESULTADO] OR 16#02;   // bit 1: OK
+	            #Imagen_palet[#IDX_CALIDAD] := 1;
+	        ELSE
+	            #Imagen_palet[#IDX_CALIDAD] := 2;
+	            #Imagen_palet[#IDX_RECHAZO] := #MOTIVO_NOK;
+	        END_IF;
+	        IF #Camara_orientacion_ok THEN
+	            #Imagen_palet[#IDX_RESULTADO] := #Imagen_palet[#IDX_RESULTADO] OR 16#04;   // bit 2: orientacion OK
+	        END_IF;
+	        #Imagen_palet[#IDX_IMAGE_ID] := #Camara_id_imagen;
+	        #Imagen_palet[#IDX_INTENTOS] := INT_TO_BYTE(BYTE_TO_INT(#Imagen_palet[#IDX_INTENTOS]) + 1);
+	        #Imagen_palet[#IDX_ESTACIONES_COMPLETADAS] := #Imagen_palet[#IDX_ESTACIONES_COMPLETADAS] OR #BIT_CAMARA;
+	        #Etapa_app := 40;
+
+	    30: // FALLO de la camara: no se marca completada ni se evalua
+	        #App_alarma := TRUE;
+	        #Etapa_app := 40;
+
+	    40: // FIN: se mantiene hasta que la estacion baja App_inicio
+	        #App_terminada := TRUE;
+	        IF NOT #App_inicio THEN
+	            #Etapa_app := 0;
+	        END_IF;
+
+	    ELSE
+	        #Etapa_app := 0;
+	END_CASE;
+
+	#T_camara(IN := #Etapa_app = 10, PT := T#5s);
+
+	// Emergencia: todo a seguro y vuelta a reposo
+	IF #Emergencia THEN
+	    #Etapa_app := 0;
+	    #Camara_disparar := FALSE;
+	END_IF;
+END_FUNCTION_BLOCK

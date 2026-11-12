@@ -1,0 +1,75 @@
+FUNCTION_BLOCK "Est_FB_App_Plantilla"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT
+      Entradas_app : "UDT_Entradas_APP";   // UDT propio de la estacion: sensores de la aplicacion
+      App_inicio : Bool;                   // la estacion pide empezar (palet leido y en posicion)
+      Emergencia : Bool;
+      Rearme : Bool;                       // flanco del boton de rearme
+   END_VAR
+
+   VAR_OUTPUT
+      App_en_reposo : Bool;                // la aplicacion esta lista para recibir un palet
+      App_terminada : Bool;                // la aplicacion ha acabado; la estacion escribe el tag
+      App_alarma : Bool;                   // parpadeo de alarma en el piloto q2 (opcional)
+      App_rearme_requerido : Bool;         // enciende la luz de rearme (opcional)
+      Inhibir_cinta : Bool;                // TRUE = la cinta no debe moverse (por ejemplo, eje fuera de reposo)
+   END_VAR
+
+   VAR_IN_OUT
+      Salidas_app : "UDT_Salidas_APP";     // UDT propio de la estacion: actuadores de la aplicacion
+      Imagen_palet : Array[0..27] of Byte; // bloque del tag RFID: lee y escribe aqui, solo en tus bytes
+   END_VAR
+
+   VAR
+      Etapa_app : Int;
+   END_VAR
+
+   VAR CONSTANT
+      // Bytes del tag que usa ESTA estacion. Ver Mapa_RFID_CPLab.xlsx.
+      // Tienen que estar dentro de Mascara_lectura / Mascara_escritura de Main.
+      IDX_EJEMPLO_LEER : Int := 5;
+      IDX_EJEMPLO_ESCRIBIR : Int := 4;
+   END_VAR
+
+
+BEGIN
+	// Salidas a su valor seguro en cada ciclo; cada etapa activa las que necesite
+	#App_en_reposo := FALSE;
+	#App_terminada := FALSE;
+	#App_alarma := FALSE;
+	#Inhibir_cinta := FALSE;
+
+	CASE #Etapa_app OF
+	    0:  // REPOSO
+	        // TODO: condicion real de reposo de tu estacion (sensores en posicion inicial)
+	        #App_en_reposo := TRUE;
+	        IF #App_inicio AND #App_en_reposo THEN
+	            // Ejemplo de lectura de un byte del tag:
+	            //   IF #Imagen_palet[#IDX_EJEMPLO_LEER] = 1 THEN ...
+	            #Etapa_app := 10;
+	        END_IF;
+
+	    10: // TRABAJO
+	        // TODO: secuencia de tu estacion. Activa aqui tus Salidas_app.
+	        // Ejemplo de escritura de un byte del tag (solo si esta en Mascara_escritura):
+	        //   #Imagen_palet[#IDX_EJEMPLO_ESCRIBIR] := #Imagen_palet[#IDX_EJEMPLO_ESCRIBIR] OR 16#01;
+	        #Etapa_app := 20;
+
+	    20: // FIN: se mantiene hasta que la estacion baja App_inicio
+	        #App_terminada := TRUE;
+	        IF NOT #App_inicio THEN
+	            #Etapa_app := 0;
+	        END_IF;
+
+	    ELSE
+	        #Etapa_app := 0;
+	END_CASE;
+
+	// Emergencia: todo a seguro y vuelta a reposo
+	IF #Emergencia THEN
+	    #Etapa_app := 0;
+	    // TODO: pon a FALSE todas tus Salidas_app
+	END_IF;
+	// TODO si tu estacion necesita rearme propio: App_rearme_requerido := TRUE hasta que llegue #Rearme
+END_FUNCTION_BLOCK

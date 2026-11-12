@@ -1,0 +1,199 @@
+FUNCTION_BLOCK "Est_FB_Estacion"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      InBasico : "UDT_Entradas_Basico";
+      InRFID : "UDT_Entradas_RFID";
+      InStopper : "UDT_Entradas_Stopper";
+      Direccion_lectura : Word;
+      Direccion_escritura : Word;
+      App_en_reposo : Bool;
+      App_terminada : Bool;
+      App_alarma : Bool;
+      App_rearme_requerido : Bool;
+      Inhibir_cinta : Bool;
+      Mascara_lectura : DWord := 16#0FFFFFFF;
+      Mascara_escritura : DWord;
+   END_VAR
+
+   VAR_OUTPUT 
+      App_inicio : Bool;
+      Emergencia : Bool;
+      Rearme : Bool;
+   END_VAR
+
+   VAR_IN_OUT 
+      OutBasico : "UDT_Salidas_Basico";
+      OutRFID : "UDT_Salidas_RFID";
+      Imagen_palet : Array[0..27] of Byte;
+   END_VAR
+
+   VAR 
+      Etapa_gestion : Int;
+      Etapa_0 : Bool;
+      Etapa_1 : Bool;
+      Etapa_2 : Bool;
+      Etapa_3 : Bool;
+      Etapa_4 : Bool;
+      Etapa_5 : Bool;
+      Estado_Estacion { S7_SetPoint := 'False'} : "UDT_Estado";
+      Flanco_rearme {InstructionName := 'R_TRIG'; LibVersion := '1.0'} : R_TRIG;
+      FB2_Modo_Instance : "Est_FB_Modo";
+      FB3_Cinta_Instance : "Est_FB_Cinta";
+      FB4_RFID_Instance : "Est_FB_RFID";
+      Ciclo_manual_acabado { S7_SetPoint := 'True'} : Bool;
+   END_VAR
+
+
+BEGIN
+    #Estado_Estacion.App_en_reposo := #App_en_reposo;
+    #Estado_Estacion.App_terminada := #App_terminada;
+    #Estado_Estacion.App_alarma := #App_alarma;
+    
+    //Flanco de rearme
+    #Flanco_rearme(CLK := #InBasico.Boton_rearme);
+    
+    //Condiciones combinacionales
+    //las CI han cambiado ahora que tenemos app
+    //? Tension en la maquina (24 Vdc) - No existe senal de PLC.
+    //? Aire comprimido (6 bar) - No existe senal de PLC.
+    //? Debe existir un palet correctamente posicionado.
+    //? El cilindro eje vertical Debe estar en su posicion extrema superior.
+    //? El cilindro eje horizontal Debe estar referenciado.
+    //? La garra estara en posicion de reposo (desctivada/cerrada).
+    //? No existe estado de emergencia.
+    #Estado_Estacion.Estacion_cond_iniciales := NOT #Estado_Estacion.Emergencia AND NOT #InStopper.Sensor_stopper_abajo AND #Estado_Estacion.App_en_reposo
+    AND NOT #Estado_Estacion.Rfid_error;
+    
+    #Estado_Estacion.Condicion_arranque_auto := #Estado_Estacion.Estacion_cond_iniciales;
+    #Estado_Estacion.Condicion_arranque_manual := #Estado_Estacion.Estacion_cond_iniciales AND #Estado_Estacion.Palet_en_estacion;
+    
+    #Estado_Estacion.Cinta_habilitada := (#Estado_Estacion.Ciclo_auto_activo OR #Estado_Estacion.Ciclo_manual_activo) AND NOT #Estado_Estacion.Emergencia;
+    
+    //llamo a Modo
+    #FB2_Modo_Instance(Seta_emergencia := NOT #InBasico.Seta_emergencia,
+                       Boton_rearme := #InBasico.Boton_rearme,
+                       Boton_marcha := #InBasico.Boton_marcha,
+                       Boton_paro := NOT #InBasico.Boton_paro,
+                       Selector_automatico := #InBasico.Selector_modo,
+                       Condicion_arranque_auto := #Estado_Estacion.Condicion_arranque_auto,
+                       Condicion_arranque_manual := #Estado_Estacion.Condicion_arranque_manual,
+                       Ciclo_manual_acabado := #Ciclo_manual_acabado,
+                       Modo_auto := #Estado_Estacion.Modo_auto,
+                       Modo_manual := #Estado_Estacion.Modo_manual,
+                       Ciclo_auto_activo := #Estado_Estacion.Ciclo_auto_activo,
+                       Ciclo_manual_activo := #Estado_Estacion.Ciclo_manual_activo,
+                       Emergencia := #Estado_Estacion.Emergencia,
+                       Rearme_requerido := #Estado_Estacion.Rearme_requerido,
+                       Marcha_permitida := #Estado_Estacion.Marcha_permitida
+    );
+    
+    //gestion
+    CASE #Etapa_gestion OF
+        0:  // ESPERA PALET
+            IF (#Estado_Estacion.Ciclo_auto_activo OR #Estado_Estacion.Ciclo_manual_activo) AND #Estado_Estacion.Palet_en_posicion AND NOT #Estado_Estacion.Emergencia THEN
+                #Etapa_gestion := 1;
+            END_IF;
+        1:  // LEER RFID
+            IF #Estado_Estacion.Rfid_error THEN
+                #Etapa_gestion := 6;
+            ELSIF #Estado_Estacion.Rfid_lectura_ok THEN
+                #Etapa_gestion := 2;
+            END_IF;
+        2:  // APLICACION
+            IF #Estado_Estacion.App_terminada THEN
+                #Etapa_gestion := 3;
+            END_IF;
+        3:  // ESCRIBIR RFID
+            IF #Estado_Estacion.Rfid_error THEN
+                #Etapa_gestion := 6;
+            ELSIF #Estado_Estacion.Rfid_escritura_ok THEN
+                #Etapa_gestion := 4;
+            END_IF;
+        4:  // EVACUAR
+            IF #Estado_Estacion.Palet_evacuado THEN
+                #Etapa_gestion := 5;
+            END_IF;
+        5:  // FIN PALET
+            #Etapa_gestion := 0;
+        6:  // FALLO RFID
+            IF #Flanco_rearme.Q THEN
+                #Etapa_gestion := 4;
+            END_IF;
+        ELSE
+            #Etapa_gestion := 0;
+    END_CASE;
+    
+    //Emergencia
+    IF #Estado_Estacion.Emergencia THEN
+        #Etapa_gestion := 0;
+    END_IF;
+    
+    //Ordenes
+    #Estado_Estacion.Orden_leer := (#Etapa_gestion = 1);
+    #Estado_Estacion.App_inicio := (#Etapa_gestion = 2);
+    #Estado_Estacion.Orden_escribir := (#Etapa_gestion = 3);
+    #Estado_Estacion.Orden_evacuar := (#Etapa_gestion = 4);
+    #Ciclo_manual_acabado := (#Etapa_gestion = 5 OR (#Etapa_gestion = 0 AND NOT #Estado_Estacion.Palet_en_estacion))
+    AND #Estado_Estacion.Modo_manual;
+    #Estado_Estacion.Rearme_requerido_gestion := (#Etapa_gestion = 6);
+    
+    //Cadenas
+    #FB3_Cinta_Instance(Cinta_habilitada := #Estado_Estacion.Cinta_habilitada,
+                        Orden_evacuar := #Estado_Estacion.Orden_evacuar,
+                        Emergencia := #Estado_Estacion.Emergencia,
+                        Sensor_palet_izq := #InBasico.Sensor_palet_izq,
+                        Sensor_palet_dch := #InBasico.Sensor_palet_dch,
+                        Sensor_ind_bien_pos := #InBasico.Sensor_ind_bien_pos,
+                        Sensor_stopper_abajo := #InStopper.Sensor_stopper_abajo,
+                        Cinta_dch := #OutBasico.Cinta_dch,
+                        Bajar_stopper := #OutBasico.Bajar_stopper,
+                        Palet_en_posicion := #Estado_Estacion.Palet_en_posicion,
+                        Palet_en_estacion := #Estado_Estacion.Palet_en_estacion,
+                        Palet_evacuado := #Estado_Estacion.Palet_evacuado
+    );
+    
+    IF #Inhibir_cinta THEN
+        #OutBasico.Cinta_dch := FALSE;
+    END_IF;
+    
+    #FB4_RFID_Instance(Orden_leer := #Estado_Estacion.Orden_leer,
+                       Orden_escribir := #Estado_Estacion.Orden_escribir,
+                       Emergencia := #Estado_Estacion.Emergencia,
+                       Tag_datos_escritos := #InRFID.Tag_datos_escritos,
+                       Tag_datos_leidos := #InRFID.Tag_datos_leidos,
+                       Tag_antena_apagada := #InRFID.Tag_antena_apagada,
+                       Tag_detectado := #InRFID.Tag_detectado,
+                       Tag_error := #InRFID.Tag_error,
+                       Tag_proceso_listo := #InRFID.Tag_proceso_listo,
+                       Tag_codigo_error := #InRFID.Tag_codigo_error,
+                       Tag_direccion_confirmada := #InRFID.Tag_direccion_confirmada,
+                       Tag_datos_leidos_escritos := #InRFID.Tag_datos_leidos_escritos,
+                       Mascara_lectura:=#Mascara_lectura,
+                       Mascara_escritura:=#Mascara_escritura,
+                       Tag_escribir := #OutRFID.Tag_escribir,
+                       Tag_leer := #OutRFID.Tag_leer,
+                       Tag_antena_apagar := #OutRFID.Tag_antena_apagar,
+                       Tag_direccion_leer_escribir := #OutRFID.Tag_direccion_leer_escribir,
+                       Tag_datos_a_escribir := #OutRFID.Tag_datos_a_escribir,
+                       Rfid_lectura_ok := #Estado_Estacion.Rfid_lectura_ok,
+                       Rfid_escritura_ok := #Estado_Estacion.Rfid_escritura_ok,
+                       Rfid_error := #Estado_Estacion.Rfid_error,
+                       Rfid_codigo_error := #Estado_Estacion.Rfid_codigo_error,
+                       Imagen:=#Imagen_palet,
+                       Direccion_escritura:=#Direccion_escritura,
+                       Direccion_lectura:=#Direccion_lectura);
+    
+    #App_inicio := #Estado_Estacion.App_inicio;
+    #Emergencia := #Estado_Estacion.Emergencia;
+    #Rearme := #Flanco_rearme.Q;
+    
+    //Luces del panel y salidas sin uso
+    #OutBasico.Led_boton_marcha := #Estado_Estacion.Marcha_permitida;
+    #OutBasico.Led_boton_rearme := #Estado_Estacion.Rearme_requerido OR #Estado_Estacion.Rearme_requerido_gestion OR #App_rearme_requerido;
+    #OutBasico.Led_q1_ciclo_auto := #Estado_Estacion.Ciclo_auto_activo;
+    #OutBasico.Led_q2_emergencia := #Estado_Estacion.Emergencia OR (#Estado_Estacion.App_alarma);// AND "Clock_1Hz");
+    #OutBasico.Cinta_izq := FALSE;
+    #OutBasico.Cinta_velocidad_baja := FALSE;
+END_FUNCTION_BLOCK
+

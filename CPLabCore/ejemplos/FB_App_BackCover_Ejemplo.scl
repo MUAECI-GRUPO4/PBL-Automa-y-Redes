@@ -1,0 +1,109 @@
+FUNCTION_BLOCK "FB_App_BackCover_Ejemplo"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT
+      // --- contrato con la libreria ---
+      App_inicio : Bool;
+      Emergencia : Bool;
+      // --- senales fisicas de BackCover: cablealas a tus tags en Main (nombres de ejemplo) ---
+      Tapa_frontal_presente : Bool;    // sensor: hay tapa frontal en el palet
+      Tapa_trasera_presente : Bool;    // sensor: ya hay una tapa trasera (no debe haberla)
+      Almacen_vacio : Bool;            // el almacen de tapas traseras no tiene stock
+      Tapa_colocada : Bool;            // confirmacion de que la tapa ha quedado en el palet
+   END_VAR
+
+   VAR_OUTPUT
+      // --- contrato con la libreria ---
+      App_en_reposo : Bool;
+      App_terminada : Bool;
+      App_alarma : Bool;
+      App_rearme_requerido : Bool;
+      Inhibir_cinta : Bool;
+      // --- actuadores fisicos ---
+      Colocar_tapa : Bool;             // ejecuta el movimiento de colocar la tapa trasera
+   END_VAR
+
+   VAR_IN_OUT
+      Imagen_palet : Array[0..27] of Byte;
+   END_VAR
+
+   VAR
+      Etapa_app : Int;
+      T_colocar {InstructionName := 'TON_TIME'; LibVersion := '1.0'} : TON_TIME;
+   END_VAR
+
+   VAR CONSTANT
+      // Bytes del tag que usa BackCover (ver Mapa_RFID_CPLab.xlsx)
+      IDX_ESTACIONES_A_REALIZAR : Int := 3;
+      IDX_ESTACIONES_COMPLETADAS : Int := 4;
+      IDX_ESTADO_BACKCOVER : Int := 12;
+      IDX_TAPA_FRONTAL : Int := 23;    // reservado, por acordar con el grupo de FrontCover
+      BIT_BACKCOVER : Byte := 16#02;   // bit 1 de las mascaras de estacion
+      ESTADO_REQUERIDA : Byte := 16#01;
+      ESTADO_COLOCADA : Byte := 16#02;
+      ESTADO_FALTA_STOCK : Byte := 16#04;
+   END_VAR
+
+
+BEGIN
+	#App_en_reposo := FALSE;
+	#App_terminada := FALSE;
+	#App_alarma := FALSE;
+	#Inhibir_cinta := FALSE;
+	#Colocar_tapa := FALSE;
+
+	CASE #Etapa_app OF
+	    0:  // REPOSO
+	        #App_en_reposo := TRUE;       // TODO: anade aqui la condicion de reposo de tu mecanismo
+	        IF #App_inicio AND #App_en_reposo THEN
+	            IF #Imagen_palet[#IDX_ESTACIONES_A_REALIZAR] = 0
+	               OR (#Imagen_palet[#IDX_ESTACIONES_A_REALIZAR] AND #BIT_BACKCOVER) <> 0 THEN
+	                #Imagen_palet[#IDX_ESTADO_BACKCOVER] := #Imagen_palet[#IDX_ESTADO_BACKCOVER] OR #ESTADO_REQUERIDA;
+	                // condiciones: tapa frontal (sensor; el byte 23 solo si se ha acordado) y sin tapa trasera previa
+	                IF #Tapa_frontal_presente AND NOT #Tapa_trasera_presente THEN
+	                    IF #Almacen_vacio THEN
+	                        #Etapa_app := 30;     // sin stock: se avisa en el tag y no se coloca
+	                    ELSE
+	                        #Etapa_app := 10;
+	                    END_IF;
+	                ELSE
+	                    #Etapa_app := 40;         // no se puede colocar (sin tapa frontal o ya hay trasera)
+	                END_IF;
+	            ELSE
+	                #Etapa_app := 40;             // esta estacion no se pide: el palet pasa sin tocar nada
+	            END_IF;
+	        END_IF;
+
+	    10: // COLOCAR la tapa trasera
+	        #Colocar_tapa := TRUE;
+	        IF #Tapa_colocada THEN
+	            #Imagen_palet[#IDX_ESTADO_BACKCOVER] := #Imagen_palet[#IDX_ESTADO_BACKCOVER] OR #ESTADO_COLOCADA;
+	            #Imagen_palet[#IDX_ESTACIONES_COMPLETADAS] := #Imagen_palet[#IDX_ESTACIONES_COMPLETADAS] OR #BIT_BACKCOVER;
+	            #Etapa_app := 40;
+	        ELSIF #T_colocar.Q THEN
+	            #Etapa_app := 30;                 // no confirma la colocacion: se trata como fallo
+	        END_IF;
+
+	    30: // FALTA STOCK o fallo: se marca en el tag, sin bit de completada
+	        #Imagen_palet[#IDX_ESTADO_BACKCOVER] := #Imagen_palet[#IDX_ESTADO_BACKCOVER] OR #ESTADO_FALTA_STOCK;
+	        #App_alarma := TRUE;
+	        #Etapa_app := 40;
+
+	    40: // FIN: se mantiene hasta que la estacion baja App_inicio
+	        #App_terminada := TRUE;
+	        IF NOT #App_inicio THEN
+	            #Etapa_app := 0;
+	        END_IF;
+
+	    ELSE
+	        #Etapa_app := 0;
+	END_CASE;
+
+	#T_colocar(IN := #Etapa_app = 10, PT := T#10s);
+
+	// Emergencia: todo a seguro y vuelta a reposo
+	IF #Emergencia THEN
+	    #Etapa_app := 0;
+	    #Colocar_tapa := FALSE;
+	END_IF;
+END_FUNCTION_BLOCK
