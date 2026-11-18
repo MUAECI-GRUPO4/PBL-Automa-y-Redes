@@ -65,6 +65,10 @@ Orden de bytes **big-endian** (el de los S7). Un datagrama lleva varias señales
  tipo:     0 = BOOL (1 B), 1 = INT (2 B), 2 = DINT (4 B), 3 = REAL (4 B)
 ```
 
+![Datagrama UDP](diagramas/datagrama-udp.png)
+
+Ejemplo (29 bytes, U2): `50 47 01 01 00 00 00 0A 00 00 01 9A F2 32 B2 00 00 02 00 01 03 42 C8 00 00 00 02 00 01` es el PLC 1, `seq` 10, `ts_origin` 1765000000000, con dos entradas: la señal 1 de tipo REAL con valor 100.0 y la señal 2 de tipo BOOL con valor verdadero.
+
 - `signal_id` se traduce a `path` con la tabla `[signals]` de la configuración, no viaja el nombre.
 - **Pérdidas, duplicados y desorden** (U1, D2), por cada `plc_id`:
   - `seq` mayor que el esperado: se cuentan los `seq` saltados como perdidos.
