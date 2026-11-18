@@ -9,10 +9,3 @@ Puente entre los PLC de la maqueta (OT) y los sistemas superiores (IT): adquisic
 | `src/core`, `src/acq`, `src/outputs`, `src/feeder` | núcleo de datos, conectores de adquisición, de salida y alimentador de InfluxDB |
 | `plc/` | programas de los PLC (exportación de TIA Portal) |
 | `deploy/` | Docker Compose, InfluxDB y paneles de Grafana en JSON |
-| `tests/` | pruebas |
-
-Pruebas (solo biblioteca estándar, Python 3.10 o superior), desde esta carpeta:
-
-```
-python -m unittest discover -s tests
-```
