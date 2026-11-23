@@ -3,3 +3,10 @@
 *.toc
 *.xdv
 __pycache__/
+# Secretos y configuración local
+.env
+*.key
+*.pem
+certs/
+pasarela/config/*.ini
+!pasarela/config/ejemplo.ini
