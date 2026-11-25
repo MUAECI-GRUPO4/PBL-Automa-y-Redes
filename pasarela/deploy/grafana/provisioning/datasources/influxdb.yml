@@ -1,0 +1,19 @@
+# Fuente de datos como código: Grafana la crea sola al arrancar.
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB
+    uid: influxdb
+    type: influxdb
+    access: proxy
+    url: "http://influxdb:8086"
+    isDefault: true
+    editable: false
+    jsonData:
+      version: Flux
+      organization: "$INFLUX_ORG"
+      defaultBucket: "$INFLUX_BUCKET"
+    secureJsonData:
+      # Token de administración: válido solo para el arranque (C0). Antes de crear el
+      # usuario de solo lectura (C7) hay que cambiarlo por un token que solo pueda leer.
+      token: "$INFLUX_TOKEN"

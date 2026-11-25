@@ -1,0 +1,3 @@
+# Contraseñas: nunca al repositorio
+.env
+.env.tmp

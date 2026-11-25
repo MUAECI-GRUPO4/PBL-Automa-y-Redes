@@ -1,0 +1,68 @@
+# Monitorización del PBL 2 (tarea 2.10): InfluxDB guarda los datos y Grafana los muestra.
+# Uso: bash preparar.sh && docker compose up -d
+# Las contraseñas vienen de .env, que no se versiona. Si falta una, Compose se detiene.
+
+name: pbl2-monitorizacion
+
+services:
+  influxdb:
+    image: influxdb:2.7.12
+    restart: unless-stopped
+    environment:
+      # Solo tienen efecto en el primer arranque, con el volumen vacío
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: "${INFLUX_USUARIO:?falta en .env}"
+      DOCKER_INFLUXDB_INIT_PASSWORD: "${INFLUX_CLAVE:?falta en .env}"
+      DOCKER_INFLUXDB_INIT_ORG: "${INFLUX_ORG:?falta en .env}"
+      DOCKER_INFLUXDB_INIT_BUCKET: "${INFLUX_BUCKET:?falta en .env}"
+      DOCKER_INFLUXDB_INIT_RETENTION: "${INFLUX_RETENCION:?falta en .env}"
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "${INFLUX_TOKEN:?falta en .env}"
+    ports:
+      - "${IP_PUBLICADA:-127.0.0.1}:8086:8086"
+    volumes:
+      - "influxdb-datos:/var/lib/influxdb2"
+      - "influxdb-config:/etc/influxdb2"
+    healthcheck:
+      test:
+        - CMD
+        - influx
+        - ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  grafana:
+    image: grafana/grafana-oss:12.0.2
+    restart: unless-stopped
+    depends_on:
+      influxdb:
+        condition: service_healthy
+    environment:
+      # El enunciado prohíbe el usuario administrador por defecto
+      GF_SECURITY_ADMIN_USER: "${GRAFANA_USUARIO:?falta en .env}"
+      GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_CLAVE:?falta en .env}"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      # Las usa grafana/provisioning/datasources/influxdb.yml
+      INFLUX_ORG: "${INFLUX_ORG:?falta en .env}"
+      INFLUX_BUCKET: "${INFLUX_BUCKET:?falta en .env}"
+      INFLUX_TOKEN: "${INFLUX_TOKEN:?falta en .env}"
+    ports:
+      - "${IP_PUBLICADA:-127.0.0.1}:3000:3000"
+    volumes:
+      - "grafana-datos:/var/lib/grafana"
+      # Solo esta subcarpeta: montar provisioning entera taparía las que trae la imagen
+      - "./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "wget -q -O /dev/null http://localhost:3000/api/health"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  influxdb-datos:
+  influxdb-config:
+  grafana-datos:
