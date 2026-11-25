@@ -1,0 +1,4703 @@
+{
+ "plc": "PLC_Press",
+ "plc_id": 3,
+ "estacion": "prensa",
+ "bloques": [
+  {
+   "id": 1,
+   "sym": "\"DB_App_Prensa\".Entradas_app",
+   "path": "cplab/prensa/db_app_prensa/entradas_app",
+   "tipo": "\"UDT_Entradas_APP\"",
+   "arbol": {
+    "m": [
+     [
+      "Eje_z_arriba",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Eje_z_abajo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Gripper_abierto",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Almacen_izq_lleno",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Almacen_dch_lleno",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Eje_referenciado",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Motion_complete",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Ready",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 8,
+    "2": 2,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 2,
+   "sym": "\"DB_App_Prensa\".App_inicio",
+   "path": "cplab/prensa/db_app_prensa/app_inicio",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 3,
+   "sym": "\"DB_App_Prensa\".Emergencia",
+   "path": "cplab/prensa/db_app_prensa/emergencia",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 4,
+   "sym": "\"DB_App_Prensa\".Rearme",
+   "path": "cplab/prensa/db_app_prensa/rearme",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 5,
+   "sym": "\"DB_App_Prensa\".App_en_reposo",
+   "path": "cplab/prensa/db_app_prensa/app_en_reposo",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 6,
+   "sym": "\"DB_App_Prensa\".App_terminada",
+   "path": "cplab/prensa/db_app_prensa/app_terminada",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 7,
+   "sym": "\"DB_App_Prensa\".App_alarma",
+   "path": "cplab/prensa/db_app_prensa/app_alarma",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 8,
+   "sym": "\"DB_App_Prensa\".App_rearme_requerido",
+   "path": "cplab/prensa/db_app_prensa/app_rearme_requerido",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 9,
+   "sym": "\"DB_App_Prensa\".Inhibir_cinta",
+   "path": "cplab/prensa/db_app_prensa/inhibir_cinta",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 10,
+   "sym": "\"DB_App_Prensa\".Etapa_app",
+   "path": "cplab/prensa/db_app_prensa/etapa_app",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 11,
+   "sym": "\"DB_App_Prensa\".NextState",
+   "path": "cplab/prensa/db_app_prensa/nextstate",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 12,
+   "sym": "\"DB_App_Prensa\".StateChange",
+   "path": "cplab/prensa/db_app_prensa/statechange",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 13,
+   "sym": "\"DB_App_Prensa\".Hold_Time",
+   "path": "cplab/prensa/db_app_prensa/hold_time",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 14,
+   "sym": "\"DB_App_Prensa\".Rep_Counter",
+   "path": "cplab/prensa/db_app_prensa/rep_counter",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 15,
+   "sym": "\"DB_App_Prensa\".Rep_qty",
+   "path": "cplab/prensa/db_app_prensa/rep_qty",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 16,
+   "sym": "\"DB_App_Prensa\".Combined",
+   "path": "cplab/prensa/db_app_prensa/combined",
+   "tipo": "Word",
+   "arbol": {
+    "t": "Word"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 17,
+   "sym": "\"DB_App_Prensa\".Prensado_real_ms",
+   "path": "cplab/prensa/db_app_prensa/prensado_real_ms",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 18,
+   "sym": "\"DB_App_Prensa\".Prensado_acumulado_ms",
+   "path": "cplab/prensa/db_app_prensa/prensado_acumulado_ms",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 19,
+   "sym": "\"DB_App_Prensa\".TON_Timeout.IN",
+   "path": "cplab/prensa/db_app_prensa/ton_timeout/in",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 20,
+   "sym": "\"DB_App_Prensa\".TON_Timeout.Q",
+   "path": "cplab/prensa/db_app_prensa/ton_timeout/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 21,
+   "sym": "\"DB_App_Prensa\".TON_Timeout.PT",
+   "path": "cplab/prensa/db_app_prensa/ton_timeout/pt",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 22,
+   "sym": "\"DB_App_Prensa\".TON_Timeout.ET",
+   "path": "cplab/prensa/db_app_prensa/ton_timeout/et",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 23,
+   "sym": "\"DB_App_Prensa\".TON_Hold_Time.IN",
+   "path": "cplab/prensa/db_app_prensa/ton_hold_time/in",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 24,
+   "sym": "\"DB_App_Prensa\".TON_Hold_Time.Q",
+   "path": "cplab/prensa/db_app_prensa/ton_hold_time/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 25,
+   "sym": "\"DB_App_Prensa\".TON_Hold_Time.PT",
+   "path": "cplab/prensa/db_app_prensa/ton_hold_time/pt",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 26,
+   "sym": "\"DB_App_Prensa\".TON_Hold_Time.ET",
+   "path": "cplab/prensa/db_app_prensa/ton_hold_time/et",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 27,
+   "sym": "\"DB_App_Prensa\".IDX_Completadas",
+   "path": "cplab/prensa/db_app_prensa/idx_completadas",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 28,
+   "sym": "\"DB_App_Prensa\".IDX_GolpesIn",
+   "path": "cplab/prensa/db_app_prensa/idx_golpesin",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 29,
+   "sym": "\"DB_App_Prensa\".IDX_PressTime_1",
+   "path": "cplab/prensa/db_app_prensa/idx_presstime_1",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 30,
+   "sym": "\"DB_App_Prensa\".IDX_PressTime_2",
+   "path": "cplab/prensa/db_app_prensa/idx_presstime_2",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 31,
+   "sym": "\"DB_App_Prensa\".IDX_HitDone",
+   "path": "cplab/prensa/db_app_prensa/idx_hitdone",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 32,
+   "sym": "\"DB_App_Prensa\".IDX_PressReal_1",
+   "path": "cplab/prensa/db_app_prensa/idx_pressreal_1",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 33,
+   "sym": "\"DB_App_Prensa\".IDX_PressReal_2",
+   "path": "cplab/prensa/db_app_prensa/idx_pressreal_2",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 34,
+   "sym": "\"DB_App_Prensa\".Bit_Press",
+   "path": "cplab/prensa/db_app_prensa/bit_press",
+   "tipo": "Byte",
+   "arbol": {
+    "t": "Byte"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 35,
+   "sym": "\"DB_Estacion\".Imagen_palet",
+   "path": "cplab/prensa/db_estacion/imagen_palet",
+   "tipo": "Array[0..107] of Byte",
+   "arbol": {
+    "arr": [
+     0,
+     107
+    ],
+    "el": {
+     "t": "Byte"
+    }
+   },
+   "lon": {
+    "1": 108,
+    "2": 108,
+    "3": 108
+   },
+   "ro": true
+  },
+  {
+   "id": 36,
+   "sym": "\"DB_Estacion\".App_inicio",
+   "path": "cplab/prensa/db_estacion/app_inicio",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 37,
+   "sym": "\"DB_Estacion\".App_en_reposo",
+   "path": "cplab/prensa/db_estacion/app_en_reposo",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 38,
+   "sym": "\"DB_Estacion\".App_terminada",
+   "path": "cplab/prensa/db_estacion/app_terminada",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 39,
+   "sym": "\"DB_Estacion\".App_alarma",
+   "path": "cplab/prensa/db_estacion/app_alarma",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 40,
+   "sym": "\"DB_Estacion\".App_rearme_requerido",
+   "path": "cplab/prensa/db_estacion/app_rearme_requerido",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 41,
+   "sym": "\"DB_Estacion\".Inhibir_cinta",
+   "path": "cplab/prensa/db_estacion/inhibir_cinta",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 42,
+   "sym": "\"DB_Estacion\".Emergencia",
+   "path": "cplab/prensa/db_estacion/emergencia",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 43,
+   "sym": "\"DB_Estacion\".Rearme",
+   "path": "cplab/prensa/db_estacion/rearme",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 44,
+   "sym": "\"DB_Estacion\".Hora_actual",
+   "path": "cplab/prensa/db_estacion/hora_actual",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 45,
+   "sym": "\"DB_Estacion\".Hora_inicio_app",
+   "path": "cplab/prensa/db_estacion/hora_inicio_app",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 46,
+   "sym": "\"DB_Estacion\".Registro_nuevo",
+   "path": "cplab/prensa/db_estacion/registro_nuevo",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 47,
+   "sym": "\"DB_Estacion\".Registro_palet",
+   "path": "cplab/prensa/db_estacion/registro_palet",
+   "tipo": "Array[0..107] of Byte",
+   "arbol": {
+    "arr": [
+     0,
+     107
+    ],
+    "el": {
+     "t": "Byte"
+    }
+   },
+   "lon": {
+    "1": 108,
+    "2": 108,
+    "3": 108
+   },
+   "ro": true
+  },
+  {
+   "id": 48,
+   "sym": "\"DB_Estacion\".Out_hora_inicio",
+   "path": "cplab/prensa/db_estacion/out_hora_inicio",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 49,
+   "sym": "\"DB_Estacion\".Out_hora_fin",
+   "path": "cplab/prensa/db_estacion/out_hora_fin",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 50,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_OUT",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_out",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 51,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_OUT_1",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_out_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 52,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_OUT_2",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_out_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 53,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_OUT_3",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_out_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 54,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_OUT",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_out",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 55,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_OUT_1",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_out_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 56,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_OUT_2",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_out_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 57,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_OUT_3",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_out_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 58,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_PRENSA",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_prensa",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 59,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_PRENSA_1",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_prensa_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 60,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_PRENSA_2",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_prensa_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 61,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_PRENSA_3",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_prensa_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 62,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_PRENSA",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_prensa",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 63,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_PRENSA_1",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_prensa_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 64,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_PRENSA_2",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_prensa_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 65,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_PRENSA_3",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_prensa_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 66,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_CAM",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_cam",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 67,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_CAM_1",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_cam_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 68,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_CAM_2",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_cam_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 69,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_CAM_3",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_cam_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 70,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_CAM",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_cam",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 71,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_CAM_1",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_cam_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 72,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_CAM_2",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_cam_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 73,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_CAM_3",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_cam_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 74,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_BACK",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_back",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 75,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_BACK_1",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_back_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 76,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_BACK_2",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_back_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 77,
+   "sym": "\"DB_Estacion\".MASCARA_LECTURA_BACK_3",
+   "path": "cplab/prensa/db_estacion/mascara_lectura_back_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 78,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_BACK",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_back",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 79,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_BACK_1",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_back_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 80,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_BACK_2",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_back_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 81,
+   "sym": "\"DB_Estacion\".MASCARA_ESCRITURA_BACK_3",
+   "path": "cplab/prensa/db_estacion/mascara_escritura_back_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 82,
+   "sym": "\"DB_Estacion\".Parada_fina",
+   "path": "cplab/prensa/db_estacion/parada_fina",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 83,
+   "sym": "\"DB_Estacion\".Encoder_cuentas",
+   "path": "cplab/prensa/db_estacion/encoder_cuentas",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 84,
+   "sym": "\"DB_Estacion\".Distancia_parada_fina_cuentas",
+   "path": "cplab/prensa/db_estacion/distancia_parada_fina_cuentas",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 85,
+   "sym": "\"DB_Estacion\".Tiempo_bajada_cilindro",
+   "path": "cplab/prensa/db_estacion/tiempo_bajada_cilindro",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 86,
+   "sym": "\"Est_DB_Gestor\".InBasico",
+   "path": "cplab/prensa/est_db_gestor/inbasico",
+   "tipo": "\"UDT_Entradas_Basico\"",
+   "arbol": {
+    "m": [
+     [
+      "Boton_marcha",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Boton_paro",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Selector_modo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Boton_rearme",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_ind_bien_pos",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Seta_emergencia",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_palet_izq",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_palet_dch",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 8,
+    "2": 2,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 87,
+   "sym": "\"Est_DB_Gestor\".InRFID",
+   "path": "cplab/prensa/est_db_gestor/inrfid",
+   "tipo": "\"UDT_Entradas_RFID\"",
+   "arbol": {
+    "m": [
+     [
+      "Tag_datos_escritos",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_datos_leidos",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E4_2",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E4_3",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_antena_apagada",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_detectado",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_error",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_proceso_listo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_codigo_error",
+      {
+       "t": "Byte"
+      }
+     ],
+     [
+      "Tag_direccion_confirmada",
+      {
+       "t": "Word"
+      }
+     ],
+     [
+      "Tag_datos_leidos_escritos",
+      {
+       "arr": [
+        0,
+        27
+       ],
+       "el": {
+        "t": "Byte"
+       }
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 39,
+    "2": 32,
+    "3": 32
+   },
+   "ro": true
+  },
+  {
+   "id": 88,
+   "sym": "\"Est_DB_Gestor\".InStopper",
+   "path": "cplab/prensa/est_db_gestor/instopper",
+   "tipo": "\"UDT_Entradas_Stopper\"",
+   "arbol": {
+    "m": [
+     [
+      "Sensor_ind_0",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_ind_1",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_ind_2",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_ind_3",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E2_4",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E2_5",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E2_6",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_stopper_abajo",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 8,
+    "2": 2,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 89,
+   "sym": "\"Est_DB_Gestor\".Direccion_lectura",
+   "path": "cplab/prensa/est_db_gestor/direccion_lectura",
+   "tipo": "Word",
+   "arbol": {
+    "t": "Word"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 90,
+   "sym": "\"Est_DB_Gestor\".Direccion_escritura",
+   "path": "cplab/prensa/est_db_gestor/direccion_escritura",
+   "tipo": "Word",
+   "arbol": {
+    "t": "Word"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 91,
+   "sym": "\"Est_DB_Gestor\".App_en_reposo",
+   "path": "cplab/prensa/est_db_gestor/app_en_reposo",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 92,
+   "sym": "\"Est_DB_Gestor\".App_terminada",
+   "path": "cplab/prensa/est_db_gestor/app_terminada",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 93,
+   "sym": "\"Est_DB_Gestor\".App_alarma",
+   "path": "cplab/prensa/est_db_gestor/app_alarma",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 94,
+   "sym": "\"Est_DB_Gestor\".App_rearme_requerido",
+   "path": "cplab/prensa/est_db_gestor/app_rearme_requerido",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 95,
+   "sym": "\"Est_DB_Gestor\".Inhibir_cinta",
+   "path": "cplab/prensa/est_db_gestor/inhibir_cinta",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 96,
+   "sym": "\"Est_DB_Gestor\".Mascara_lectura",
+   "path": "cplab/prensa/est_db_gestor/mascara_lectura",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 97,
+   "sym": "\"Est_DB_Gestor\".Mascara_escritura",
+   "path": "cplab/prensa/est_db_gestor/mascara_escritura",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 98,
+   "sym": "\"Est_DB_Gestor\".Mascara_lectura_1",
+   "path": "cplab/prensa/est_db_gestor/mascara_lectura_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 99,
+   "sym": "\"Est_DB_Gestor\".Mascara_lectura_2",
+   "path": "cplab/prensa/est_db_gestor/mascara_lectura_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 100,
+   "sym": "\"Est_DB_Gestor\".Mascara_lectura_3",
+   "path": "cplab/prensa/est_db_gestor/mascara_lectura_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 101,
+   "sym": "\"Est_DB_Gestor\".Mascara_escritura_1",
+   "path": "cplab/prensa/est_db_gestor/mascara_escritura_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 102,
+   "sym": "\"Est_DB_Gestor\".Mascara_escritura_2",
+   "path": "cplab/prensa/est_db_gestor/mascara_escritura_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 103,
+   "sym": "\"Est_DB_Gestor\".Mascara_escritura_3",
+   "path": "cplab/prensa/est_db_gestor/mascara_escritura_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 104,
+   "sym": "\"Est_DB_Gestor\".Id_estacion",
+   "path": "cplab/prensa/est_db_gestor/id_estacion",
+   "tipo": "USInt",
+   "arbol": {
+    "t": "USInt"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 105,
+   "sym": "\"Est_DB_Gestor\".Lote",
+   "path": "cplab/prensa/est_db_gestor/lote",
+   "tipo": "UInt",
+   "arbol": {
+    "t": "UInt"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 106,
+   "sym": "\"Est_DB_Gestor\".Parada_fina",
+   "path": "cplab/prensa/est_db_gestor/parada_fina",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 107,
+   "sym": "\"Est_DB_Gestor\".Distancia_parada_fina_cuentas",
+   "path": "cplab/prensa/est_db_gestor/distancia_parada_fina_cuentas",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 108,
+   "sym": "\"Est_DB_Gestor\".App_inicio",
+   "path": "cplab/prensa/est_db_gestor/app_inicio",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 109,
+   "sym": "\"Est_DB_Gestor\".Emergencia",
+   "path": "cplab/prensa/est_db_gestor/emergencia",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 110,
+   "sym": "\"Est_DB_Gestor\".Rearme",
+   "path": "cplab/prensa/est_db_gestor/rearme",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 111,
+   "sym": "\"Est_DB_Gestor\".Hora_actual",
+   "path": "cplab/prensa/est_db_gestor/hora_actual",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 112,
+   "sym": "\"Est_DB_Gestor\".Hora_inicio_app",
+   "path": "cplab/prensa/est_db_gestor/hora_inicio_app",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 113,
+   "sym": "\"Est_DB_Gestor\".Encoder_cuentas",
+   "path": "cplab/prensa/est_db_gestor/encoder_cuentas",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 114,
+   "sym": "\"Est_DB_Gestor\".Etapa_gestion",
+   "path": "cplab/prensa/est_db_gestor/etapa_gestion",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 115,
+   "sym": "\"Est_DB_Gestor\".Etapa_0",
+   "path": "cplab/prensa/est_db_gestor/etapa_0",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 116,
+   "sym": "\"Est_DB_Gestor\".Etapa_1",
+   "path": "cplab/prensa/est_db_gestor/etapa_1",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 117,
+   "sym": "\"Est_DB_Gestor\".Etapa_2",
+   "path": "cplab/prensa/est_db_gestor/etapa_2",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 118,
+   "sym": "\"Est_DB_Gestor\".Etapa_3",
+   "path": "cplab/prensa/est_db_gestor/etapa_3",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 119,
+   "sym": "\"Est_DB_Gestor\".Etapa_4",
+   "path": "cplab/prensa/est_db_gestor/etapa_4",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 120,
+   "sym": "\"Est_DB_Gestor\".Etapa_5",
+   "path": "cplab/prensa/est_db_gestor/etapa_5",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 121,
+   "sym": "\"Est_DB_Gestor\".Estado_Estacion",
+   "path": "cplab/prensa/est_db_gestor/estado_estacion",
+   "tipo": "\"UDT_Estado\"",
+   "arbol": {
+    "m": [
+     [
+      "Modo_auto",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Modo_manual",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Ciclo_auto_activo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Ciclo_manual_activo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Emergencia",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Rearme_requerido",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Marcha_permitida",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Condicion_arranque_auto",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Condicion_arranque_manual",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Estacion_cond_iniciales",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Cinta_habilitada",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Ciclo_manual_terminado",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Rearme_requerido_gestion",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Palet_en_posicion",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Palet_en_estacion",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Palet_evacuado",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Orden_evacuar",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Orden_leer",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Orden_escribir",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Rfid_lectura_ok",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Rfid_escritura_ok",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Rfid_error",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Rfid_codigo_error",
+      {
+       "t": "Byte"
+      }
+     ],
+     [
+      "App_inicio",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "App_en_reposo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "App_terminada",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "App_alarma",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 27,
+    "2": 6,
+    "3": 5
+   },
+   "ro": true
+  },
+  {
+   "id": 122,
+   "sym": "\"Est_DB_Gestor\".Flanco_rearme.CLK",
+   "path": "cplab/prensa/est_db_gestor/flanco_rearme/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 123,
+   "sym": "\"Est_DB_Gestor\".Flanco_rearme.Q",
+   "path": "cplab/prensa/est_db_gestor/flanco_rearme/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 124,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Seta_emergencia",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/seta_emergencia",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 125,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Boton_rearme",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/boton_rearme",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 126,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Boton_marcha",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/boton_marcha",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 127,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Boton_paro",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/boton_paro",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 128,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Selector_automatico",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/selector_automatico",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 129,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Condicion_arranque_auto",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/condicion_arranque_auto",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 130,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Condicion_arranque_manual",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/condicion_arranque_manual",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 131,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Ciclo_manual_acabado",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/ciclo_manual_acabado",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 132,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Etapa_emergencia",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/etapa_emergencia",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 133,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Etapa_modo",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/etapa_modo",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 134,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Etapa_ciclo",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/etapa_ciclo",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 135,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Flanco_marcha.CLK",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/flanco_marcha/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 136,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Flanco_marcha.Q",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/flanco_marcha/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 137,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Flanco_rearme.CLK",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/flanco_rearme/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 138,
+   "sym": "\"Est_DB_Gestor\".FB2_Modo_Instance.Flanco_rearme.Q",
+   "path": "cplab/prensa/est_db_gestor/fb2_modo_instance/flanco_rearme/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 139,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Emergencia",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/emergencia",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 140,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Cinta_habilitada",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/cinta_habilitada",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 141,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Orden_evacuar",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/orden_evacuar",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 142,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Sensor_palet_izq",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/sensor_palet_izq",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 143,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Sensor_palet_dch",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/sensor_palet_dch",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 144,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Sensor_ind_bien_pos",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/sensor_ind_bien_pos",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 145,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Sensor_stopper_abajo",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/sensor_stopper_abajo",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 146,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Sensor_ind_1",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/sensor_ind_1",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 147,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Sensor_ind_2",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/sensor_ind_2",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 148,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Sensor_ind_3",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/sensor_ind_3",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 149,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Parada_fina",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/parada_fina",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 150,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Encoder_A",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/encoder_a",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 151,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Distancia_parada_fina_cuentas",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/distancia_parada_fina_cuentas",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 152,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Encoder_cuentas",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/encoder_cuentas",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 153,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Velocidad_baja",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/velocidad_baja",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 154,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Etapa_cinta",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/etapa_cinta",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 155,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_subida_sensor_palet_dch.CLK",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_subida_sensor_palet_dch/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 156,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_subida_sensor_palet_dch.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_subida_sensor_palet_dch/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 157,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_bajada_sensor_palet_dch.CLK",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_bajada_sensor_palet_dch/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 158,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_bajada_sensor_palet_dch.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_bajada_sensor_palet_dch/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 159,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Palets_en_cinta",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/palets_en_cinta",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 160,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_subida_sensor_palet_izq.CLK",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_subida_sensor_palet_izq/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 161,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_subida_sensor_palet_izq.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_subida_sensor_palet_izq/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 162,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_Stopper_Etapa5.IN",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_stopper_etapa5/in",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 163,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_Stopper_Etapa5.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_stopper_etapa5/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 164,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_Stopper_Etapa5.PT",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_stopper_etapa5/pt",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 165,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_Stopper_Etapa5.ET",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_stopper_etapa5/et",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 166,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_avance.IN",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_avance/in",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 167,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_avance.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_avance/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 168,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_avance.PT",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_avance/pt",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 169,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_avance.ET",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_avance/et",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 170,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_salida_extra.IN",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_salida_extra/in",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 171,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_salida_extra.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_salida_extra/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 172,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_salida_extra.PT",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_salida_extra/pt",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 173,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_salida_extra.ET",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_salida_extra/et",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 174,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_parada_fina.IN",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_parada_fina/in",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 175,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_parada_fina.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_parada_fina/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 176,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_parada_fina.PT",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_parada_fina/pt",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 177,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Timer_parada_fina.ET",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/timer_parada_fina/et",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 178,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_encoder_A.CLK",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_encoder_a/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 179,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_encoder_A.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_encoder_a/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 180,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_sensor_ind_bien_pos.CLK",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_sensor_ind_bien_pos/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 181,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Flanco_sensor_ind_bien_pos.Q",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/flanco_sensor_ind_bien_pos/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 182,
+   "sym": "\"Est_DB_Gestor\".FB3_Cinta_Instance.Aviso_lento",
+   "path": "cplab/prensa/est_db_gestor/fb3_cinta_instance/aviso_lento",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 183,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Emergencia",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/emergencia",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 184,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Orden_escribir",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/orden_escribir",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 185,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Orden_leer",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/orden_leer",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 186,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_datos_escritos",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_datos_escritos",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 187,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_datos_leidos",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_datos_leidos",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 188,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_antena_apagada",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_antena_apagada",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 189,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_detectado",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_detectado",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 190,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_error",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_error",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 191,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_proceso_listo",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_proceso_listo",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 192,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_codigo_error",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_codigo_error",
+   "tipo": "Byte",
+   "arbol": {
+    "t": "Byte"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 193,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_direccion_confirmada",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_direccion_confirmada",
+   "tipo": "Word",
+   "arbol": {
+    "t": "Word"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 194,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Tag_datos_leidos_escritos",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/tag_datos_leidos_escritos",
+   "tipo": "Array[0..27] of Byte",
+   "arbol": {
+    "arr": [
+     0,
+     27
+    ],
+    "el": {
+     "t": "Byte"
+    }
+   },
+   "lon": {
+    "1": 28,
+    "2": 28,
+    "3": 28
+   },
+   "ro": true
+  },
+  {
+   "id": 195,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Direccion_lectura",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/direccion_lectura",
+   "tipo": "Word",
+   "arbol": {
+    "t": "Word"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 196,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Direccion_escritura",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/direccion_escritura",
+   "tipo": "Word",
+   "arbol": {
+    "t": "Word"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 197,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_lectura",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_lectura",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 198,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_escritura",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_escritura",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 199,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_lectura_1",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_lectura_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 200,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_lectura_2",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_lectura_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 201,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_lectura_3",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_lectura_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 202,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_escritura_1",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_escritura_1",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 203,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_escritura_2",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_escritura_2",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 204,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_escritura_3",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_escritura_3",
+   "tipo": "DWord",
+   "arbol": {
+    "t": "DWord"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 205,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.T_Rfid.IN",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/t_rfid/in",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 206,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.T_Rfid.Q",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/t_rfid/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 207,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.T_Rfid.PT",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/t_rfid/pt",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 208,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.T_Rfid.ET",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/t_rfid/et",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 209,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Etapa_rfid",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/etapa_rfid",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 210,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Ventana_actual",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/ventana_actual",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 211,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_lectura_tabla",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_lectura_tabla",
+   "tipo": "Array[0..3] of DWord",
+   "arbol": {
+    "arr": [
+     0,
+     3
+    ],
+    "el": {
+     "t": "DWord"
+    }
+   },
+   "lon": {
+    "1": 16,
+    "2": 16,
+    "3": 16
+   },
+   "ro": true
+  },
+  {
+   "id": 212,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Mascara_escritura_tabla",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/mascara_escritura_tabla",
+   "tipo": "Array[0..3] of DWord",
+   "arbol": {
+    "arr": [
+     0,
+     3
+    ],
+    "el": {
+     "t": "DWord"
+    }
+   },
+   "lon": {
+    "1": 16,
+    "2": 16,
+    "3": 16
+   },
+   "ro": true
+  },
+  {
+   "id": 213,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Ventana_lectura_activa",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/ventana_lectura_activa",
+   "tipo": "Array[0..3] of Bool",
+   "arbol": {
+    "arr": [
+     0,
+     3
+    ],
+    "el": {
+     "t": "Bool"
+    }
+   },
+   "lon": {
+    "1": 4,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 214,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Ventana_escritura_activa",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/ventana_escritura_activa",
+   "tipo": "Array[0..3] of Bool",
+   "arbol": {
+    "arr": [
+     0,
+     3
+    ],
+    "el": {
+     "t": "Bool"
+    }
+   },
+   "lon": {
+    "1": 4,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 215,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Direccion_ventana_lectura",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/direccion_ventana_lectura",
+   "tipo": "Word",
+   "arbol": {
+    "t": "Word"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 216,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Direccion_ventana_escritura",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/direccion_ventana_escritura",
+   "tipo": "Word",
+   "arbol": {
+    "t": "Word"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 217,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Etapa_7",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/etapa_7",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 218,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Etapa_9",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/etapa_9",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 219,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Etapa_1",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/etapa_1",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 220,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Etapa_3",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/etapa_3",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 221,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Etapa_4",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/etapa_4",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 222,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Rfid_ocupado",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/rfid_ocupado",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 223,
+   "sym": "\"Est_DB_Gestor\".FB4_RFID_Instance.Imagen_leida",
+   "path": "cplab/prensa/est_db_gestor/fb4_rfid_instance/imagen_leida",
+   "tipo": "Array[0..107] of Byte",
+   "arbol": {
+    "arr": [
+     0,
+     107
+    ],
+    "el": {
+     "t": "Byte"
+    }
+   },
+   "lon": {
+    "1": 108,
+    "2": 108,
+    "3": 108
+   },
+   "ro": true
+  },
+  {
+   "id": 224,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Epoch_s",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/epoch_s",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 225,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Milisegundos",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/milisegundos",
+   "tipo": "UInt",
+   "arbol": {
+    "t": "UInt"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 226,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Valida",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/valida",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 227,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Hora",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/hora",
+   "tipo": "DTL",
+   "arbol": {
+    "m": [
+     [
+      "YEAR",
+      {
+       "t": "UInt"
+      }
+     ],
+     [
+      "MONTH",
+      {
+       "t": "USInt"
+      }
+     ],
+     [
+      "DAY",
+      {
+       "t": "USInt"
+      }
+     ],
+     [
+      "WEEKDAY",
+      {
+       "t": "USInt"
+      }
+     ],
+     [
+      "HOUR",
+      {
+       "t": "USInt"
+      }
+     ],
+     [
+      "MINUTE",
+      {
+       "t": "USInt"
+      }
+     ],
+     [
+      "SECOND",
+      {
+       "t": "USInt"
+      }
+     ],
+     [
+      "NANOSECOND",
+      {
+       "t": "UDInt"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 12,
+    "2": 12,
+    "3": 12
+   },
+   "ro": true
+  },
+  {
+   "id": 228,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Codigo",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/codigo",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 229,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Anio",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/anio",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 230,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Mes",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/mes",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 231,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Dia",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/dia",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 232,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Era",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/era",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 233,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Anio_era",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/anio_era",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 234,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Dia_anio",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/dia_anio",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 235,
+   "sym": "\"Est_DB_Gestor\".FB5_Reloj_Instance.Dias",
+   "path": "cplab/prensa/est_db_gestor/fb5_reloj_instance/dias",
+   "tipo": "DInt",
+   "arbol": {
+    "t": "DInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 236,
+   "sym": "\"Est_DB_Gestor\".Flanco_emergencia.CLK",
+   "path": "cplab/prensa/est_db_gestor/flanco_emergencia/clk",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 237,
+   "sym": "\"Est_DB_Gestor\".Flanco_emergencia.Q",
+   "path": "cplab/prensa/est_db_gestor/flanco_emergencia/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 238,
+   "sym": "\"Est_DB_Gestor\".Etapa_gestion_anterior",
+   "path": "cplab/prensa/est_db_gestor/etapa_gestion_anterior",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 239,
+   "sym": "\"Est_DB_Gestor\".Emergencias_pendientes",
+   "path": "cplab/prensa/est_db_gestor/emergencias_pendientes",
+   "tipo": "Int",
+   "arbol": {
+    "t": "Int"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 240,
+   "sym": "\"Est_DB_Gestor\".Inicio_app_segundos",
+   "path": "cplab/prensa/est_db_gestor/inicio_app_segundos",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 241,
+   "sym": "\"Est_DB_Gestor\".Inicio_app_milisegundos",
+   "path": "cplab/prensa/est_db_gestor/inicio_app_milisegundos",
+   "tipo": "UInt",
+   "arbol": {
+    "t": "UInt"
+   },
+   "lon": {
+    "1": 2,
+    "2": 2,
+    "3": 2
+   },
+   "ro": true
+  },
+  {
+   "id": 242,
+   "sym": "\"Est_DB_Gestor\".Ultima_secuencia",
+   "path": "cplab/prensa/est_db_gestor/ultima_secuencia",
+   "tipo": "UDInt",
+   "arbol": {
+    "t": "UDInt"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 243,
+   "sym": "\"Est_DB_Gestor\".Ciclo_manual_acabado",
+   "path": "cplab/prensa/est_db_gestor/ciclo_manual_acabado",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 244,
+   "sym": "\"Est_DB_Gestor\".Timer_parpadeo.IN",
+   "path": "cplab/prensa/est_db_gestor/timer_parpadeo/in",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 245,
+   "sym": "\"Est_DB_Gestor\".Timer_parpadeo.Q",
+   "path": "cplab/prensa/est_db_gestor/timer_parpadeo/q",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 246,
+   "sym": "\"Est_DB_Gestor\".Timer_parpadeo.PT",
+   "path": "cplab/prensa/est_db_gestor/timer_parpadeo/pt",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 247,
+   "sym": "\"Est_DB_Gestor\".Timer_parpadeo.ET",
+   "path": "cplab/prensa/est_db_gestor/timer_parpadeo/et",
+   "tipo": "Time",
+   "arbol": {
+    "t": "Time"
+   },
+   "lon": {
+    "1": 4,
+    "2": 4,
+    "3": 4
+   },
+   "ro": true
+  },
+  {
+   "id": 248,
+   "sym": "\"Est_DB_Gestor\".Parpadeo",
+   "path": "cplab/prensa/est_db_gestor/parpadeo",
+   "tipo": "Bool",
+   "arbol": {
+    "t": "Bool"
+   },
+   "lon": {
+    "1": 1,
+    "2": 1,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 249,
+   "sym": "\"Entradas_APP\"",
+   "path": "cplab/prensa/tag/entradas_app",
+   "tipo": "UDT_Entradas_APP",
+   "arbol": {
+    "m": [
+     [
+      "Eje_z_arriba",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Eje_z_abajo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Gripper_abierto",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Almacen_izq_lleno",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Almacen_dch_lleno",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Eje_referenciado",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Motion_complete",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Ready",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 8,
+    "2": 2,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 250,
+   "sym": "\"Entradas_Basico\"",
+   "path": "cplab/prensa/tag/entradas_basico",
+   "tipo": "UDT_Entradas_Basico",
+   "arbol": {
+    "m": [
+     [
+      "Boton_marcha",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Boton_paro",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Selector_modo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Boton_rearme",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_ind_bien_pos",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Seta_emergencia",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_palet_izq",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_palet_dch",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 8,
+    "2": 2,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 251,
+   "sym": "\"Entradas_Stopper\"",
+   "path": "cplab/prensa/tag/entradas_stopper",
+   "tipo": "UDT_Entradas_Stopper",
+   "arbol": {
+    "m": [
+     [
+      "Sensor_ind_0",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_ind_1",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_ind_2",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_ind_3",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E2_4",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E2_5",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E2_6",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Sensor_stopper_abajo",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 8,
+    "2": 2,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 252,
+   "sym": "\"Salidas_Basico\"",
+   "path": "cplab/prensa/tag/salidas_basico",
+   "tipo": "UDT_Salidas_Basico",
+   "arbol": {
+    "m": [
+     [
+      "Led_boton_marcha",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Led_boton_rearme",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Led_q1_ciclo_auto",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Led_q2_emergencia",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Cinta_dch",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Cinta_izq",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Cinta_velocidad_baja",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Bajar_stopper",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 8,
+    "2": 2,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 253,
+   "sym": "\"Salidas_APP\"",
+   "path": "cplab/prensa/tag/salidas_app",
+   "tipo": "UDT_Salidas_APP",
+   "arbol": {
+    "m": [
+     [
+      "Subir_cilindro",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Bajar_cilindro",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Abrir_freno",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Abrir_garra",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Activar_driver_motor",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Bit_pos_0",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Bit_pos_1",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Iniciar_mov_driver_motor",
+      {
+       "t": "Bool"
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 8,
+    "2": 2,
+    "3": 1
+   },
+   "ro": true
+  },
+  {
+   "id": 254,
+   "sym": "\"Entradas_RFID\"",
+   "path": "cplab/prensa/tag/entradas_rfid",
+   "tipo": "UDT_Entradas_RFID",
+   "arbol": {
+    "m": [
+     [
+      "Tag_datos_escritos",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_datos_leidos",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E4_2",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_E4_3",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_antena_apagada",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_detectado",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_error",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_proceso_listo",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_codigo_error",
+      {
+       "t": "Byte"
+      }
+     ],
+     [
+      "Tag_direccion_confirmada",
+      {
+       "t": "Word"
+      }
+     ],
+     [
+      "Tag_datos_leidos_escritos",
+      {
+       "arr": [
+        0,
+        27
+       ],
+       "el": {
+        "t": "Byte"
+       }
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 39,
+    "2": 32,
+    "3": 32
+   },
+   "ro": true
+  },
+  {
+   "id": 255,
+   "sym": "\"Salidas_RFID\"",
+   "path": "cplab/prensa/tag/salidas_rfid",
+   "tipo": "UDT_Salidas_RFID",
+   "arbol": {
+    "m": [
+     [
+      "Tag_escribir",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_leer",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_reservado_2",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_reservado_3",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_antena_apagar",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_reservado_5",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_reservado_6",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Tag_reservado_7",
+      {
+       "t": "Bool"
+      }
+     ],
+     [
+      "Reservado_AB5",
+      {
+       "t": "Byte"
+      }
+     ],
+     [
+      "Tag_direccion_leer_escribir",
+      {
+       "t": "Word"
+      }
+     ],
+     [
+      "Tag_datos_a_escribir",
+      {
+       "arr": [
+        0,
+        27
+       ],
+       "el": {
+        "t": "Byte"
+       }
+      }
+     ]
+    ]
+   },
+   "lon": {
+    "1": 39,
+    "2": 32,
+    "3": 32
+   },
+   "ro": true
+  }
+ ]
+}

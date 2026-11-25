@@ -1,0 +1,6 @@
+ORGANIZATION_BLOCK "UDP_Pasarela"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+BEGIN
+   "DB_UDP_Pasarela"();
+END_ORGANIZATION_BLOCK
