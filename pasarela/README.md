@@ -7,5 +7,6 @@ Puente entre los PLC de la maqueta (OT) y los sistemas superiores (IT): adquisic
 | `docs/` | contratos de interfaz ([`contratos.md`](docs/contratos.md)) y diagramas |
 | `config/` | configuración de ejemplo; la real es `pasarela.ini` y no se versiona |
 | `src/core`, `src/acq`, `src/outputs`, `src/feeder` | núcleo de datos, conectores de adquisición, de salida y alimentador de InfluxDB |
-| `plc/` | programas de los PLC (exportación de TIA Portal) |
+| `plc/` | programas de los PLC (exportación de TIA Portal); envío UDP en [`plc/udp/`](plc/udp/README.md) |
+| `tools/` | receptor UDP provisional para probar los PLC ([`tools/README.md`](tools/README.md)) |
 | `deploy/` | Docker Compose, InfluxDB y paneles de Grafana en JSON |

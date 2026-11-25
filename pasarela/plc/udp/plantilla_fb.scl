@@ -1,0 +1,190 @@
+FUNCTION_BLOCK "FB_UDP_Pasarela"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+// @PLC@: @N_BLOQUES@ bloques (un Serialize por miembro de DB o tag). Generado por generar.py
+   VAR_INPUT
+      Deshabilitar : Bool := FALSE;
+      Periodo : Time := T#100ms;
+      Ip_pasarela : Array[1..4] of Byte := [172, 21, 0, 200];
+      Puerto : UInt := 5000;
+   END_VAR
+   VAR_OUTPUT
+      Conectado : Bool;
+      Enviados : UDInt;
+      Fallidos : UDInt;
+      Bloques_omitidos : Int;
+      Estado_tusend : Word;
+      Estado_tcon : Word;
+      Ultimo_error_tcon : Word;
+      Errores_tcon : UDInt;
+      Intentos_tcon : UDInt;
+      Conexiones_ok : UDInt;
+   END_VAR
+   VAR
+      Etapa : Int;
+      Secuencia : UDInt;
+      Marca_tiempo : LInt;
+      Lanza_conexion : Bool;
+      Flanco_conexion : R_TRIG;
+      Lanza_envio : Bool;
+      Conexion : TCON_IP_v4;
+      Destino : TADDR_Param;
+      Cliente_con : TCON;
+      Cliente_envio : TUSEND;
+      Espera_conexion : TON_TIME;
+      Espera_periodo : TON_TIME;
+      Espera_envio : TON_TIME;
+      Datagrama : Array[0..1499] of Byte;
+      Foto : Array[0..@FOTO_MAX@] of Byte;
+      Total : DInt;
+      Cursor : DInt;
+      Bytes_trozo : DInt;
+      Bloques_trozo : UInt;
+      Bloques_escritos : Int;
+@COPIAS@
+   END_VAR
+   VAR_TEMP
+      periodo_uso : Time;
+      puerto_uso : UInt;
+      i : Int;
+      w : Word;
+      d : DWord;
+      l : LWord;
+      reloj : DTL;
+      anio : LInt;
+      mes : LInt;
+      dia : LInt;
+      era : LInt;
+      ano_era : LInt;
+      dia_ano : LInt;
+      dias : LInt;
+      resultado : Int;
+      longitud : DInt;
+      lon_bloque : DInt;
+   END_VAR
+   VAR CONSTANT
+      ID_PLC : USInt := @PLC_ID@;
+      N_BLOQUES : Int := @N_BLOQUES@;
+      MAX_PAYLOAD : DInt := @MAX_PAYLOAD@;
+   END_VAR
+
+BEGIN
+// parametros: un valor a cero (DB sin valores iniciales) se sustituye por el de fabrica
+#periodo_uso := #Periodo;
+IF #periodo_uso <= T#0ms THEN #periodo_uso := T#100ms; END_IF;
+#puerto_uso := #Puerto;
+IF #puerto_uso = 0 THEN #puerto_uso := 5000; END_IF;
+
+// conexion UDP: un TCON hasta que acabe bien, reintento cada segundo
+#Conexion.InterfaceId := "Local~Interfaz_PROFINET_1";
+#Conexion.ID := 16#0001;
+#Conexion.ConnectionType := 16#13;
+#Conexion.ActiveEstablished := FALSE;
+#Conexion.RemoteAddress.ADDR := #Ip_pasarela;
+#Conexion.RemotePort := #puerto_uso;
+#Conexion.LocalPort := #puerto_uso;
+FOR #i := 1 TO 4 DO
+   #Destino.REM_IP_ADDR[#i] := #Ip_pasarela[#i];
+END_FOR;
+#Destino.REM_PORT_NR := #puerto_uso;
+#Destino.RESERVED := 0;
+
+#Espera_conexion(IN := NOT #Deshabilitar AND NOT #Conectado AND NOT #Cliente_con.BUSY, PT := T#1s);
+#Lanza_conexion := #Espera_conexion.Q;
+#Cliente_con(REQ := #Lanza_conexion, ID := #Conexion.ID, CONNECT := #Conexion, STATUS => #Estado_tcon);
+#Flanco_conexion(CLK := #Lanza_conexion);
+IF #Flanco_conexion.Q THEN #Intentos_tcon := #Intentos_tcon + 1; END_IF;
+IF #Cliente_con.ERROR THEN
+   #Ultimo_error_tcon := #Estado_tcon;
+   #Errores_tcon := #Errores_tcon + 1;
+END_IF;
+IF #Cliente_con.DONE THEN
+   IF NOT #Conectado THEN #Conexiones_ok := #Conexiones_ok + 1; END_IF;
+   #Conectado := TRUE;
+   IF #Etapa = 0 THEN #Etapa := 1; END_IF;
+END_IF;
+IF #Deshabilitar THEN
+   #Conectado := FALSE;
+   #Etapa := 0;
+END_IF;
+
+// foto de todos los miembros y marca de tiempo UTC (ms desde 1970) cada periodo
+#Espera_periodo(IN := #Conectado AND #Etapa = 1, PT := #periodo_uso);
+IF #Espera_periodo.Q THEN
+   #resultado := RD_SYS_T(OUT => #reloj);
+   #anio := UINT_TO_LINT(#reloj.YEAR);
+   #mes := USINT_TO_LINT(#reloj.MONTH);
+   #dia := USINT_TO_LINT(#reloj.DAY);
+   IF #mes <= 2 THEN #anio := #anio - 1; END_IF;
+   #era := #anio / 400;
+   #ano_era := #anio - #era * 400;
+   #dia_ano := (153 * ((#mes + 9) MOD 12) + 2) / 5 + #dia - 1;
+   #dias := #era * 146097 + #ano_era * 365 + #ano_era / 4 - #ano_era / 100 + #dia_ano - 719468;
+   #Marca_tiempo := ((#dias * 86400 + USINT_TO_LINT(#reloj.HOUR) * 3600 + USINT_TO_LINT(#reloj.MINUTE) * 60
+                      + USINT_TO_LINT(#reloj.SECOND)) * 1000) + UDINT_TO_LINT(#reloj.NANOSECOND) / 1000000;
+   #Total := 0;
+   #Bloques_escritos := 0;
+@LLAMADAS@
+   #Bloques_omitidos := #N_BLOQUES - #Bloques_escritos;
+   #Cursor := 0;
+   #Etapa := 2;
+END_IF;
+
+// un datagrama por trozo: cabecera de 18 bytes + bloques enteros (id, longitud, datos)
+IF #Etapa = 2 THEN
+   #Bytes_trozo := 0;
+   #Bloques_trozo := 0;
+   #longitud := #Cursor;
+   WHILE #Cursor < #Total DO
+      #lon_bloque := BYTE_TO_DINT(#Foto[#Cursor + 2]) * 256 + BYTE_TO_DINT(#Foto[#Cursor + 3]) + 4;
+      IF #Bytes_trozo + #lon_bloque > #MAX_PAYLOAD AND #Bloques_trozo > 0 THEN EXIT; END_IF;
+      #Bytes_trozo := #Bytes_trozo + #lon_bloque;
+      #Cursor := #Cursor + #lon_bloque;
+      #Bloques_trozo := #Bloques_trozo + 1;
+   END_WHILE;
+   #Datagrama[0] := 16#50;
+   #Datagrama[1] := 16#47;
+   #Datagrama[2] := 2;
+   #Datagrama[3] := USINT_TO_BYTE(#ID_PLC);
+   #d := UDINT_TO_DWORD(#Secuencia);
+   #Datagrama[4] := #d.%B3;
+   #Datagrama[5] := #d.%B2;
+   #Datagrama[6] := #d.%B1;
+   #Datagrama[7] := #d.%B0;
+   #l := LINT_TO_LWORD(#Marca_tiempo);
+   #Datagrama[8] := #l.%B7;
+   #Datagrama[9] := #l.%B6;
+   #Datagrama[10] := #l.%B5;
+   #Datagrama[11] := #l.%B4;
+   #Datagrama[12] := #l.%B3;
+   #Datagrama[13] := #l.%B2;
+   #Datagrama[14] := #l.%B1;
+   #Datagrama[15] := #l.%B0;
+   #w := UINT_TO_WORD(#Bloques_trozo);
+   #Datagrama[16] := #w.%B1;
+   #Datagrama[17] := #w.%B0;
+   #resultado := MOVE_BLK_VARIANT(SRC := #Foto, COUNT := DINT_TO_UDINT(#Bytes_trozo),
+                                  SRC_INDEX := #longitud, DEST_INDEX := 18, DEST => #Datagrama);
+   #Secuencia := #Secuencia + 1;
+   #Lanza_envio := TRUE;
+   #Etapa := 3;
+END_IF;
+
+#Cliente_envio(REQ := #Lanza_envio, ID := #Conexion.ID, LEN := DINT_TO_UDINT(#Bytes_trozo + 18),
+               DATA := #Datagrama, ADDR := #Destino, STATUS => #Estado_tusend);
+#Lanza_envio := FALSE;
+
+// resultado del envio; si la conexion se perdio, a reconectar
+#Espera_envio(IN := #Etapa = 3, PT := T#1s);
+IF #Etapa = 3 THEN
+   IF #Cliente_envio.DONE THEN
+      #Enviados := #Enviados + 1;
+      IF #Cursor >= #Total THEN #Etapa := 1; ELSE #Etapa := 2; END_IF;
+   ELSIF #Cliente_envio.ERROR OR #Espera_envio.Q THEN
+      #Fallidos := #Fallidos + 1;
+      #Conectado := FALSE;
+      #Etapa := 0;
+   END_IF;
+END_IF;
+
+END_FUNCTION_BLOCK

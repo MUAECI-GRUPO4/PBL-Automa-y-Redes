@@ -1,0 +1,42 @@
+FUNCTION "FC_UDP_Bloque" : Int
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+// PLC_Out: serializa un miembro y le pone delante id (2 bytes) y longitud (2 bytes). Generado por generar.py
+   VAR_INPUT
+      Id : UInt;
+      Origen : Variant;
+      Inicio : DInt;
+   END_VAR
+   VAR_OUTPUT
+      Final : DInt;
+   END_VAR
+   VAR_IN_OUT
+      Foto : Array[0..3505] of Byte;
+      Escritos : Int;
+   END_VAR
+   VAR_TEMP
+      posicion : DInt;
+      longitud : DInt;
+      resultado : Int;
+      w : Word;
+   END_VAR
+
+BEGIN
+// los datos empiezan 4 bytes despues de Inicio; POS cuenta bytes desde el principio del array
+#posicion := #Inicio + 4;
+#resultado := Serialize(SRC_VARIABLE := #Origen, DEST_ARRAY := #Foto, POS := #posicion);
+IF #resultado = 0 THEN
+   #longitud := #posicion - #Inicio - 4;
+   #w := UINT_TO_WORD(#Id);
+   #Foto[#Inicio] := #w.%B1;
+   #Foto[#Inicio + 1] := #w.%B0;
+   #w := DINT_TO_WORD(#longitud);
+   #Foto[#Inicio + 2] := #w.%B1;
+   #Foto[#Inicio + 3] := #w.%B0;
+   #Final := #posicion;
+   #Escritos := #Escritos + 1;
+ELSE
+   #Final := #Inicio;
+END_IF;
+#FC_UDP_Bloque := #resultado;
+END_FUNCTION
