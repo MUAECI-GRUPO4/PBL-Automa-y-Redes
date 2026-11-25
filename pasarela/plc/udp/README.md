@@ -20,6 +20,16 @@ Los `.scl` son **generados**: no se editan a mano. Se importan a TIA Portal como
 
 Parámetros del FB (`DB_UDP_Pasarela`): `Ip_pasarela` (por defecto `172.21.0.200`), `Puerto` (0 = 5000), `Periodo` (0 = 100 ms), `Deshabilitar`. Salidas de diagnóstico: `Conectado`, `Enviados`, `Fallidos`, `Bloques_omitidos`, `Estado_tcon`, `Estado_tusend`, `Intentos_tcon`, `Errores_tcon`, `Conexiones_ok`, `Ultimo_error_tcon`.
 
+## Por qué así
+Primero probamos a leer la memoria cruda con `PEEK_BLK` (peek/poke): es lo más simple, pero los bytes salen sin nombres ni tipos y no sirve con DB optimizados. Valoramos también un UDT de pasarela escrito a mano (legible, pero solo salen las señales elegidas), una primera versión con una entrada por variable (~2000 líneas de SCL por PLC, descartada) y el servidor OPC UA del PLC (no es UDP). Nos quedamos con `Serialize` por bloques.
+
+| Ventajas | Desventajas |
+|---|---|
+| Sale **todo** (DB optimizados incluidos) con un FC corto e igual en los 4 PLC | La disposición de bytes de `Serialize` no está documentada oficialmente: la comprobamos con tráfico real (H2) |
+| Un formato uniforme: el receptor se genera de las tablas de señales | Los `block_id` cambian si cambia el programa: hay que regenerar |
+| Los tipos nuevos no exigen código nuevo | ~2,1 kB por foto: 2 datagramas y más carga de CPU del PLC que un envío selectivo |
+| | Algunos miembros solo lectura exigen copia previa a una variable local |
+
 ## Datagrama v2 (resumen)
 Cabecera de 18 B: `"PG"`, versión = 2, `plc_id`, `seq` u32, `ts_origin` u64 (ms UTC), `n` u16. Después `n` bloques `block_id u16 | len u16 | datos`. Menos de 1380 B de bloques por datagrama, siempre bloques enteros: una foto completa (~2,1 kB) son 2 datagramas.
 
