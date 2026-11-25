@@ -20,6 +20,15 @@ Los `.scl` son **generados**: no se editan a mano. Se importan a TIA Portal como
 
 Parámetros del FB (`DB_UDP_Pasarela`): `Ip_pasarela` (por defecto `172.21.0.200`), `Puerto` (0 = 5000), `Periodo` (0 = 100 ms), `Deshabilitar`. Salidas de diagnóstico: `Conectado`, `Enviados`, `Fallidos`, `Bloques_omitidos`, `Estado_tcon`, `Estado_tusend`, `Intentos_tcon`, `Errores_tcon`, `Conexiones_ok`, `Ultimo_error_tcon`.
 
+## Hecho con ayuda de Claude
+Las partes más tediosas (enumerar cientos de variables por PLC y escribir el SCL que las envía) las generamos con scripts que escribió Claude (Anthropic) bajo nuestra dirección. Elegimos el diseño y las alternativas; revisamos el resultado y lo probamos con los PLC reales.
+
+- **`exportar.ps1`** (PowerShell + TIA Openness, solo lectura): se engancha al TIA Portal abierto y exporta a XML, por cada PLC, los bloques, los tipos y las tablas de variables.
+- **`generar.py`**: lee ese XML, recorre los DB y tags y despliega los miembros (structs, arrays y UDT). Reparte las señales en bloques que quepan en un datagrama (<1380 B), asigna el `block_id` y escribe a partir de las plantillas el FB, el FC y el OB de cada PLC. Genera también las tablas `senales_<PLC>.json/csv` con el árbol de tipos, que usa el receptor para decodificar.
+- Otros dos scripts de PowerShell importaron los SCL al proyecto de TIA y los compilaron.
+
+Los scripts no están en el repo (solo su resultado). Todo SCL generado se compiló sin errores y se contrastó con tráfico real antes de darlo por bueno.
+
 ## Por qué así
 Primero probamos a leer la memoria cruda con `PEEK_BLK` (peek/poke): es lo más simple, pero los bytes salen sin nombres ni tipos y no sirve con DB optimizados. Valoramos también un UDT de pasarela escrito a mano (legible, pero solo salen las señales elegidas), una primera versión con una entrada por variable (~2000 líneas de SCL por PLC, descartada) y el servidor OPC UA del PLC (no es UDP). Nos quedamos con `Serialize` por bloques.
 
